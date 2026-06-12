@@ -1,6 +1,6 @@
 [project]
 name = "zzk"
-version = "0.2.0"
+version = "1.0.0"
 description = "지직 (zzk) - 치지직(치지직) 오픈소스 로컬 웹 방송 다운로더"
 readme = "README.md"
 requires-python = ">=3.11"
