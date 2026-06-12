@@ -1,0 +1,14 @@
+name: zzk
+
+services:
+  zzk:
+    image: ghcr.io/nergis0318/zzk:latest
+    container_name: zzk
+    env_file:
+      - .env
+    ports:
+      - "${ZZK_HOST_PORT:-8000}:8000"
+    volumes:
+      - "${ZZK_DATA_DIR:-./data}:/app/data"
+      - "${ZZK_RECORDINGS_DIR:-./recordings}:/app/recordings"
+    restart: unless-stopped
