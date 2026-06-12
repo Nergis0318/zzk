@@ -29,19 +29,21 @@ ENV PYTHONUNBUFFERED=1 \
 
 WORKDIR /app
 
-RUN apk add --no-cache ffmpeg curl
+RUN apk add --no-cache ffmpeg curl su-exec
 
 COPY --from=builder /app/.venv /app/.venv
 COPY --from=builder /app/app /app/app
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 
 RUN adduser -D -u 1000 -h /app -s /sbin/nologin zzk \
+    && chmod +x /usr/local/bin/docker-entrypoint.sh \
+    && mkdir -p /app/data /app/recordings \
     && chown -R zzk:zzk /app
-
-USER zzk
 
 EXPOSE 8000
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
     CMD curl -f http://localhost:8000/ || exit 1
 
+ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

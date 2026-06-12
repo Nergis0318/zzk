@@ -107,7 +107,16 @@ def init_db():
 
 @contextmanager
 def get_conn():
-    conn = sqlite3.connect(str(DB_PATH), timeout=30)
+    try:
+        conn = sqlite3.connect(str(DB_PATH), timeout=30)
+    except sqlite3.OperationalError as exc:
+        if "unable to open database file" in str(exc).lower():
+            raise sqlite3.OperationalError(
+                f"unable to open database file at {DB_PATH.resolve()} "
+                "(check that the data directory exists and is writable; "
+                "in Docker, ensure /app/data is mounted with uid 1000 or use the image entrypoint)"
+            ) from exc
+        raise
     conn.row_factory = sqlite3.Row
     try:
         yield conn
