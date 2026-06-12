@@ -222,6 +222,46 @@ def _output_roots() -> list[Path]:
     return roots
 
 
+def _dir_size(path: Path) -> int:
+    """Total bytes of all files under path (0 if missing)."""
+    try:
+        if not path.exists():
+            return 0
+        if path.is_file():
+            return path.stat().st_size
+        total = 0
+        for entry in path.rglob("*"):
+            if entry.is_file():
+                try:
+                    total += entry.stat().st_size
+                except OSError:
+                    pass
+        return total
+    except OSError:
+        return 0
+
+
+def _recording_size_bytes(
+    base_path: str,
+    playlist_path: Optional[str],
+    recording_id: Optional[int] = None,
+) -> int:
+    """Disk usage for one recording session (live recorder dir preferred when active)."""
+    if recording_id:
+        for entry in active.values():
+            if entry.get("recording_id") == recording_id:
+                live_dir = entry["recorder"].state.base_dir
+                if live_dir and Path(live_dir).exists():
+                    return _dir_size(Path(live_dir))
+                break
+    if not base_path:
+        return 0
+    resolved_base = base_path
+    if playlist_path:
+        resolved_base, _ = _resolve_playlist_paths(base_path, playlist_path)
+    return _dir_size(Path(resolved_base))
+
+
 def _path_is_under_output_root(path: Path) -> bool:
     try:
         resolved = path.resolve()
@@ -680,6 +720,13 @@ app.mount(
     name="recordings",
 )
 
+# Static assets (logo etc. placed in templates/ for convenience)
+app.mount(
+    "/static",
+    StaticFiles(directory=str(Path(__file__).parent / "templates"), html=False),
+    name="static",
+)
+
 # Templates (we will serve a single nice HTML page)
 templates = Jinja2Templates(directory=str(Path(__file__).parent / "templates"))
 
@@ -745,6 +792,7 @@ async def api_list_channels():
             rec_info = {
                 "segment_count": st.segment_count,
                 "total_duration": round(st.total_duration, 1),
+                "size_bytes": _dir_size(st.base_dir),
                 "current_playlist": st.current_playlist,
                 "base_dir": str(st.base_dir),
                 "started_at": active[c.channel_id]["started_at"].isoformat(),
@@ -844,9 +892,12 @@ async def api_stop_record(channel_id: str):
 async def api_list_recordings():
     recs = list_recordings(limit=300)
     out = []
+    total_size = 0
     output_dir = get_setting("output_dir", "recordings")
     for r in recs:
         rel_playlist = _build_playlist_url(r.base_path, r.playlist_path, output_dir)
+        size_bytes = _recording_size_bytes(r.base_path, r.playlist_path, r.id)
+        total_size += size_bytes
         out.append(
             {
                 "id": r.id,
@@ -859,6 +910,7 @@ async def api_list_recordings():
                 "playlist_url": rel_playlist,
                 "segment_count": r.segment_count,
                 "total_duration": round(r.total_duration, 1),
+                "size_bytes": size_bytes,
                 "quality": r.quality,
                 "error": r.error,
                 "is_active": r.id in [a.get("recording_id") for a in active.values()],
@@ -867,7 +919,7 @@ async def api_list_recordings():
                 ),
             }
         )
-    return {"recordings": out}
+    return {"recordings": out, "total_size_bytes": total_size}
 
 
 @app.delete("/api/recordings/{recording_id}")

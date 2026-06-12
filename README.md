@@ -22,6 +22,53 @@ uv run zzk
 `zzk` 명령은 기본적으로 8000 포트 + 리로드 없이 안정 실행합니다.
 (설치 후 `zzk --help`, `zzk --version` 사용 가능)
 
+## Docker로 실행하기
+
+Docker를 사용하면 별도의 Python/uv 설치 없이 바로 실행할 수 있습니다. (ffmpeg 포함)
+
+### 1. Docker Compose 사용 (권장)
+
+```bash
+# .env.example 복사 후 필요시 편집 (포트, 저장 경로)
+cp .env.example .env
+
+# 빌드 + 백그라운드 실행
+docker compose up -d --build
+```
+
+- 접속: http://localhost:5163 (`ZZK_HOST_PORT`로 변경 가능)
+- 데이터 영구 보존: 호스트의 `./data` (DB) 와 `./recordings` (녹화본)
+- 로그: `docker compose logs -f`
+- 중지: `docker compose down`
+
+### 2. docker build / docker run
+
+```bash
+docker build -t zzk .
+
+docker run -d \
+  --name zzk \
+  -p 8000:8000 \
+  -v "$(pwd)/data:/app/data" \
+  -v "$(pwd)/recordings:/app/recordings" \
+  zzk
+```
+
+Windows PowerShell:
+```powershell
+docker run -d --name zzk -p 8000:8000 -v "${PWD}/data:/app/data" -v "${PWD}/recordings:/app/recordings" zzk
+```
+
+### Docker에서 제한 방송 쿠키 사용
+
+streamlink 설정 파일을 마운트하세요:
+
+```bash
+-v "$HOME/.config/streamlink:/app/.config/streamlink:ro"
+```
+
+`compose.yml`의 `volumes` 섹션에 추가하거나, `docker run` 시 위 플래그를 붙여 사용합니다.
+
 ## 사용 방법
 
 1. **채널 등록**
@@ -80,6 +127,7 @@ uv run zzk
 - 일부 로그인 전용/연령 제한 방송은 쿠키가 필요할 수 있음
   - streamlink 설정 파일(`~/.config/streamlink/config` 또는 Windows `%APPDATA%\streamlink\config`)에 쿠키를 지정하면 자동으로 적용됩니다.
   - 예: `http-cookies=NID_AUT=...;NID_SES=...`
+  - **Docker 사용자**: 호스트의 streamlink 설정을 컨테이너에 마운트해야 합니다. (자세한 방법은 위 "Docker로 실행하기" 참조)
 - streamlink의 chzzk 플러그인이 스트림 URL 해석을 담당하므로, 대부분의 CHZZK 변화에 자동 대응됩니다.
 - 장시간 녹화 시 토큰 만료를 대비해 5분마다 live-detail을 재조회 + streamlink 재해석
 - 저장 공간 충분히 확보하세요 (1080p60은 시간당 수 GB)

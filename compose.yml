@@ -2,6 +2,7 @@ name: zzk
 
 services:
   zzk:
+    build: .
     image: ghcr.io/nergis0318/zzk:latest
     container_name: zzk
     env_file:

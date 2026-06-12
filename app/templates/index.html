@@ -505,42 +505,14 @@
                 gap: var(--s-3);
             }
 
-            .brand-mark {
+            .brand-logo {
                 width: 36px;
                 height: 36px;
                 border-radius: 9px;
-                background: radial-gradient(
-                    circle at 30% 30%,
-                    var(--Surface-Neutral-Strong),
-                    var(--Surface-Neutral-Weaker) 70%
-                );
+                object-fit: cover;
                 border: 1px solid var(--line);
-                display: grid;
-                place-items: center;
-                position: relative;
-                overflow: hidden;
-            }
-
-            .brand-mark::after {
-                content: "";
-                position: absolute;
-                inset: 6px;
-                border-radius: 4px;
-                border: 1.5px solid var(--Content-Brand-Strong);
-                box-shadow: 0 0 12px var(--Surface-Brand-Alpha-Base);
-            }
-
-            .brand-mark::before {
-                content: "";
-                position: absolute;
-                width: 6px;
-                height: 6px;
-                background: var(--rec);
-                border-radius: 50%;
-                top: 9px;
-                right: 9px;
-                box-shadow: 0 0 8px var(--rec-glow);
-                animation: blink 2.4s var(--ease-in-out) infinite;
+                flex-shrink: 0;
+                background: var(--bg-2);
             }
 
             @keyframes blink {
@@ -1896,7 +1868,7 @@
             <!-- LEFT RAIL -->
             <aside class="rail">
                 <div class="brand">
-                    <div class="brand-mark"></div>
+                    <img src="/static/logo.jpg" alt="zzk" class="brand-logo" />
                     <div class="brand-text">
                         <span class="ko">지직</span>
                         <span class="id">zzk · v0.1</span>
@@ -1930,6 +1902,10 @@
                     <div class="rail-stat">
                         <span class="v" id="stat-total">0</span>
                         <span class="l">총 녹화 수</span>
+                    </div>
+                    <div class="rail-stat">
+                        <span class="v" id="stat-storage">—</span>
+                        <span class="l">총 용량</span>
                     </div>
                 </div>
 
@@ -2008,6 +1984,7 @@
                                     <th>상태</th>
                                     <th class="num">세그</th>
                                     <th class="num">길이</th>
+                                    <th class="num">용량</th>
                                     <th class="act">액션</th>
                                 </tr>
                             </thead>
@@ -2443,6 +2420,7 @@
 
             let channelsData = [];
             let recordingsData = [];
+            let recordingsTotalSize = 0;
             let lastLogSig = "";
             let lastEventCount = 0;
             let bootDone = false;
@@ -2520,6 +2498,19 @@
                 const m = Math.floor(secs / 60);
                 const s = Math.round(secs % 60);
                 return `${m}분 ${String(s).padStart(2, "0")}초`;
+            }
+
+            function fmtSize(bytes) {
+                if (bytes == null || isNaN(bytes) || bytes <= 0) return "—";
+                const units = ["B", "KB", "MB", "GB", "TB"];
+                let n = bytes;
+                let i = 0;
+                while (n >= 1024 && i < units.length - 1) {
+                    n /= 1024;
+                    i += 1;
+                }
+                const digits = i === 0 ? 0 : n >= 100 ? 0 : n >= 10 ? 1 : 2;
+                return `${n.toFixed(digits)} ${units[i]}`;
             }
 
             /* KST: server stores UTC-naive; display in KST with explicit suffix */
@@ -2627,6 +2618,7 @@
 
                     channelsData = chans.channels || [];
                     recordingsData = recs.recordings || [];
+                    recordingsTotalSize = recs.total_size_bytes || 0;
 
                     renderChannels();
                     renderRecordings();
@@ -2681,6 +2673,8 @@
                 document.getElementById("stat-armed").textContent = armed;
                 document.getElementById("stat-total").textContent =
                     recordingsData.length;
+                document.getElementById("stat-storage").textContent =
+                    fmtSize(recordingsTotalSize);
                 const out = sets.output_dir || "recordings";
                 const outEl = document.getElementById("stat-output");
                 outEl.textContent =
@@ -2740,6 +2734,7 @@
                                 <div class="bar"><div class="fill"></div></div>
                                 <span class="val">${rec.segment_count || 0}세그</span>
                                 <span class="val">${fmtDur(rec.total_duration || 0)}</span>
+                                <span class="val">${fmtSize(rec.size_bytes)}</span>
                            </div>`
                         : `<div class="ch-meter">
                                 <span class="lbl">감시</span>
@@ -2823,7 +2818,7 @@
                     `${recordingsData.length}건`;
 
                 if (recordingsData.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="6" class="ledger-empty">아직 녹화 기록이 없습니다.</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="7" class="ledger-empty">아직 녹화 기록이 없습니다.</td></tr>`;
                     return;
                 }
 
@@ -2866,6 +2861,7 @@
                         <td>${chip}</td>
                         <td class="num">${r.segment_count ?? 0}</td>
                         <td class="num">${fmtDur(r.total_duration || 0)}</td>
+                        <td class="num">${fmtSize(r.size_bytes)}</td>
                         <td class="act">
                             <div class="row-act">${playBtn}${m3u8}${convertBtns}${stopBtn}${deleteBtn}</div>
                         </td>
