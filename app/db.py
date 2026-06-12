@@ -335,6 +335,35 @@ def get_recording(recording_id: int) -> Optional[RecordingRow]:
         return _row_to_recording(r) if r else None
 
 
+def get_latest_finished_recording(channel_id: str) -> Optional[RecordingRow]:
+    """Most recent non-active recording for a channel (for same-broadcast resume)."""
+    with get_conn() as conn:
+        r = conn.execute(
+            """
+            SELECT * FROM recordings
+            WHERE channel_id = ? AND status != 'recording'
+            ORDER BY started_at DESC
+            LIMIT 1
+            """,
+            (channel_id,),
+        ).fetchone()
+        return _row_to_recording(r) if r else None
+
+
+def reopen_recording(recording_id: int) -> None:
+    """Mark a finished recording row active again (resume same broadcast)."""
+    with get_conn() as conn:
+        conn.execute(
+            """
+            UPDATE recordings
+            SET status = 'recording', ended_at = NULL, error = NULL
+            WHERE id = ?
+            """,
+            (recording_id,),
+        )
+        conn.commit()
+
+
 def _row_to_recording(r: sqlite3.Row) -> RecordingRow:
     return RecordingRow(
         id=r["id"],

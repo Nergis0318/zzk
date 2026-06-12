@@ -41,17 +41,24 @@ from .db import (
     create_recording,
     delete_channel,
     get_channel,
+    get_latest_finished_recording,
     get_recording,
     get_setting,
     list_active_recordings,
     list_channels,
     list_recordings,
+    reopen_recording,
     set_setting,
     update_channel_settings,
     update_recording,
 )
 from .paths import DEFAULT_OUTPUT_DIR, ensure_runtime_dirs
-from .recorder import ChzzkRecorder, RecordingState
+from .recorder import (
+    ChzzkRecorder,
+    RecordingState,
+    broadcast_key_from_meta,
+    read_recording_meta,
+)
 
 # ---------------- Global state ----------------
 
@@ -201,6 +208,36 @@ def _is_dismissed_broadcast(channel_id: str, detail: LiveDetail) -> bool:
     return _broadcast_key(detail) == key
 
 
+def _find_resumable_recording(
+    channel_id: str, detail: LiveDetail
+) -> Optional[tuple[int, Path, str, dict]]:
+    """Return (recording_id, base_dir, playlist_path, meta) if the last session matches this live."""
+    prev = get_latest_finished_recording(channel_id)
+    if not prev or not prev.base_path or not prev.playlist_path:
+        return None
+
+    base_path, playlist_path = _resolve_playlist_paths(
+        prev.base_path, prev.playlist_path
+    )
+    base_dir = Path(base_path)
+    pl_file = base_dir / playlist_path
+    if not pl_file.is_file():
+        return None
+
+    meta = read_recording_meta(base_dir) or {}
+    prev_key = broadcast_key_from_meta(meta)
+    cur_key = _broadcast_key(detail)
+    if prev_key != (None, None) and prev_key == cur_key:
+        return prev.id, base_dir, playlist_path, meta
+
+    # Legacy sessions without live_id: fall back to title when both are non-empty
+    if prev_key == (None, None) and meta.get("live_title") and detail.live_title:
+        if meta.get("live_title") == detail.live_title:
+            return prev.id, base_dir, playlist_path, meta
+
+    return None
+
+
 # ---------------- Active recording cleanup (handles same-day re-lives / reconnects) ----------------
 
 
@@ -254,18 +291,32 @@ async def _cleanup_active_if_finished(channel_id: str):
         rec_id = entry.get("recording_id")
         try:
             if rec_id:
+                status = "error" if recorder.state.last_error else "completed"
+                live_still_open = False
+                try:
+                    detail = await _chzzk().get_live_detail(channel_id)
+                    if detail and detail.status == "OPEN":
+                        if _broadcast_key(detail) == (
+                            recorder.state.live_id,
+                            recorder.state.open_date,
+                        ):
+                            live_still_open = True
+                except Exception:
+                    pass
+
                 update_recording(
                     rec_id,
-                    status="error" if recorder.state.last_error else "completed",
+                    status=status,
                     ended_at=datetime.now(timezone.utc).isoformat(timespec="seconds"),
                     segment_count=recorder.state.segment_count,
                     total_duration=round(recorder.state.total_duration, 1),
                     error=recorder.state.last_error,
                 )
-                asyncio.create_task(
-                    _trigger_auto_convert(rec_id),
-                    name=f"zzk-auto-convert-{rec_id}",
-                )
+                if not live_still_open:
+                    asyncio.create_task(
+                        _trigger_auto_convert(rec_id),
+                        name=f"zzk-auto-convert-{rec_id}",
+                    )
         except Exception:
             pass
         active.pop(channel_id, None)
@@ -384,27 +435,69 @@ async def start_recording_for_channel(
         on_progress=on_progress,
     )
 
-    # Resolve live detail early so we can use the correct {channel}/{date}/{title} paths
-    # for base_path stored in DB and for the initial playlist_path.
+    rec_id: int
+    resumed = False
+    detail: Optional[LiveDetail] = None
     try:
         detail = await _chzzk().get_live_detail(ch.channel_id)
-        if detail and detail.status == "OPEN":
-            recorder.channel_name = detail.channel.channel_name or recorder.channel_name
-            recorder.state.channel_name = recorder.channel_name
-            recorder.prepare_paths(detail.live_title or "")
     except Exception:
-        # prepare_paths will be called again inside the recorder loop
-        pass
+        detail = None
 
-    # Create DB row early (now with correct base_dir if prepare_paths succeeded)
-    base_path = str(recorder.state.base_dir)
-    rec_id = create_recording(
-        channel_id=ch.channel_id,
-        channel_name=ch.channel_name,
-        base_path=base_path,
-        quality=ch.quality,
-        playlist_path=recorder.state.current_playlist or None,
+    resume_info = (
+        _find_resumable_recording(ch.channel_id, detail)
+        if detail and detail.status == "OPEN"
+        else None
     )
+
+    if resume_info:
+        prev_id, base_dir, playlist_path, meta = resume_info
+        started_raw = meta.get("started_at") or ""
+        try:
+            started_at = datetime.fromisoformat(started_raw)
+        except ValueError:
+            started_at = None
+        if recorder.load_resume_session(
+            base_dir,
+            playlist_path,
+            live_title=detail.live_title or meta.get("live_title") or "",
+            live_id=detail.live_id,
+            open_date=detail.open_date,
+            segment_count=int(meta.get("segment_count") or 0),
+            total_duration=float(meta.get("total_duration_sec") or 0.0),
+            started_at=started_at,
+        ):
+            recorder.channel_name = (
+                detail.channel.channel_name or recorder.channel_name
+            )
+            recorder.state.channel_name = recorder.channel_name
+            rec_id = prev_id
+            resumed = True
+            reopen_recording(rec_id)
+            log_event(
+                channel_id,
+                f"같은 방송 이어서 녹화 (#{rec_id}, {playlist_path})",
+            )
+        else:
+            resume_info = None
+
+    if not resumed:
+        if detail and detail.status == "OPEN":
+            recorder.channel_name = (
+                detail.channel.channel_name or recorder.channel_name
+            )
+            recorder.state.channel_name = recorder.channel_name
+            recorder.state.live_id = detail.live_id
+            recorder.state.open_date = detail.open_date
+            recorder.prepare_paths(detail.live_title or "")
+
+        base_path = str(recorder.state.base_dir)
+        rec_id = create_recording(
+            channel_id=ch.channel_id,
+            channel_name=ch.channel_name,
+            base_path=base_path,
+            quality=ch.quality,
+            playlist_path=recorder.state.current_playlist or None,
+        )
 
     await recorder.start()
 
@@ -425,9 +518,12 @@ async def start_recording_for_channel(
 
     log_event(
         channel_id,
-        f"녹화 시작됨 (trigger={triggered_by}, segment_minutes={ch.segment_minutes})",
+        f"녹화 {'재개' if resumed else '시작'}됨 (trigger={triggered_by}, segment_minutes={ch.segment_minutes})",
     )
-    return {"status": "started", "recording_id": rec_id}
+    return {
+        "status": "resumed" if resumed else "started",
+        "recording_id": rec_id,
+    }
 
 
 async def stop_recording_for_channel(channel_id: str, reason: str = "manual"):

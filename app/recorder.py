@@ -63,6 +63,8 @@ class RecordingState:
     started_at: datetime = field(default_factory=datetime.now)
     is_recording: bool = True
     live_title: str = ""
+    live_id: Optional[int] = None
+    open_date: Optional[str] = None
     playlist_filename: str = ""
     segment_count: int = 0
     total_duration: float = 0.0  # seconds
@@ -70,6 +72,7 @@ class RecordingState:
     current_playlist: Optional[str] = (
         None  # filename of the main playable m3u8 (relative to base_dir)
     )
+    resumed: bool = False
 
 
 class ChzzkRecorder:
@@ -127,6 +130,7 @@ class ChzzkRecorder:
         self._map_local_name: str = "init.mp4"
         self._segment_ext: str = ".m4s"
         self._paths_locked: bool = False
+        self._resuming: bool = False
 
     # ---------------- public API ----------------
 
@@ -169,6 +173,62 @@ class ChzzkRecorder:
             (live_title or "").strip() or getattr(self.state, "live_title", "") or ""
         )
         self._compute_paths(title)
+
+    def load_resume_session(
+        self,
+        base_dir: Path,
+        playlist_filename: str,
+        *,
+        live_title: str = "",
+        live_id: Optional[int] = None,
+        open_date: Optional[str] = None,
+        segment_count: int = 0,
+        total_duration: float = 0.0,
+        started_at: Optional[datetime] = None,
+    ):
+        """Continue an existing session (same broadcast reconnect / re-start)."""
+        base_dir = Path(base_dir)
+        playlist_filename = (playlist_filename or "").strip()
+        if not base_dir.is_dir() or not playlist_filename:
+            return False
+
+        pl_path = base_dir / playlist_filename
+        if not pl_path.is_file():
+            return False
+
+        self._resuming = True
+        self.state.resumed = True
+        self.state.base_dir = base_dir
+        self.state.live_title = live_title or ""
+        self.state.live_id = live_id
+        self.state.open_date = open_date
+        self.state.playlist_filename = playlist_filename
+        self.state.current_playlist = playlist_filename
+        self._playlist_filename = playlist_filename
+        self._root_pl_path = pl_path
+        if started_at:
+            self.state.started_at = started_at
+        self.state.segment_count = max(0, int(segment_count))
+        self.state.total_duration = max(0.0, float(total_duration))
+        self._paths_locked = True
+
+        self._chunk_dir = base_dir / "chunk"
+        if self._chunk_dir.is_dir():
+            init_path = self._chunk_dir / self._map_local_name
+            if init_path.is_file():
+                self._has_map = True
+            seg_nums: list[int] = []
+            for p in self._chunk_dir.glob(f"segment_*{self._segment_ext}"):
+                try:
+                    seg_nums.append(int(p.stem.split("_", 1)[1]))
+                except (IndexError, ValueError):
+                    pass
+            if seg_nums:
+                self._segment_counter = max(seg_nums) + 1
+            self.state.segment_count = max(self.state.segment_count, len(seg_nums))
+
+        self._strip_endlist()
+        return True
 
     def _sanitize_name(self, name: str) -> str:
         if not name:
@@ -243,6 +303,20 @@ class ChzzkRecorder:
         self.state.current_playlist = m3u8_name
         self._paths_locked = True
 
+    def _strip_endlist(self):
+        if not self._root_pl_path or not self._root_pl_path.is_file():
+            return
+        try:
+            text = self._root_pl_path.read_text(encoding="utf-8")
+        except Exception:
+            return
+        if "#EXT-X-ENDLIST" not in text:
+            return
+        lines = [ln for ln in text.splitlines() if ln.strip() != "#EXT-X-ENDLIST"]
+        self._root_pl_path.write_text(
+            "\n".join(lines).rstrip() + "\n", encoding="utf-8"
+        )
+
     def _open_root_playlist(self):
         if self._root_pl_file:
             return
@@ -250,7 +324,7 @@ class ChzzkRecorder:
             return
         first = not self._root_pl_path.exists()
         self._root_pl_file = self._root_pl_path.open("a", encoding="utf-8", buffering=1)
-        if first:
+        if first and not self._resuming:
             self._root_pl_file.write("#EXTM3U\n")
             self._root_pl_file.write("#EXT-X-VERSION:7\n")
             self._root_pl_file.write("#EXT-X-TARGETDURATION:10\n\n")
@@ -293,7 +367,10 @@ class ChzzkRecorder:
 
         # Use live title for the m3u8 filename per requested structure
         live_title = getattr(detail, "live_title", "") or ""
-        self.prepare_paths(live_title)
+        self.state.live_id = getattr(detail, "live_id", None)
+        self.state.open_date = getattr(detail, "open_date", None)
+        if not self._paths_locked:
+            self.prepare_paths(live_title)
 
         self._open_root_playlist()
 
@@ -530,6 +607,8 @@ class ChzzkRecorder:
                             "channel_id": self.state.channel_id,
                             "channel_name": self.state.channel_name,
                             "live_title": self.state.live_title,
+                            "live_id": self.state.live_id,
+                            "open_date": self.state.open_date,
                             "started_at": self.state.started_at.isoformat(),
                             "ended_at": datetime.now().isoformat(),
                             "quality": self.state.quality,
@@ -537,6 +616,7 @@ class ChzzkRecorder:
                             "total_duration_sec": round(self.state.total_duration, 1),
                             "playlist": self.state.playlist_filename,
                             "segment_minutes": self.segment_minutes,
+                            "resumed": self.state.resumed,
                         }
                     ),
                     encoding="utf-8",
@@ -559,3 +639,26 @@ class ChzzkRecorder:
 
 def json_dumps_safe(obj):
     return orjson.dumps(obj, option=orjson.OPT_INDENT_2).decode("utf-8")
+
+
+def read_recording_meta(base_dir: Path) -> Optional[dict]:
+    """Load recording.json from a session directory, if present."""
+    meta_path = Path(base_dir) / "recording.json"
+    if not meta_path.is_file():
+        return None
+    try:
+        data = orjson.loads(meta_path.read_bytes())
+        return data if isinstance(data, dict) else None
+    except Exception:
+        return None
+
+
+def broadcast_key_from_meta(meta: dict) -> tuple[Optional[int], Optional[str]]:
+    live_id = meta.get("live_id")
+    open_date = meta.get("open_date")
+    try:
+        live_id = int(live_id) if live_id is not None else None
+    except (TypeError, ValueError):
+        live_id = None
+    open_date = str(open_date) if open_date else None
+    return (live_id, open_date)
