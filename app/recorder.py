@@ -332,7 +332,9 @@ class ChzzkRecorder:
 
             try:
                 # Fetch current media playlist
-                pl_resp = await self._http.get(variant_url, headers=get_segment_headers())
+                pl_resp = await self._http.get(
+                    variant_url, headers=get_segment_headers()
+                )
                 if pl_resp.status_code in (403, 401, 410):
                     # token probably expired -> force refresh next loop
                     await asyncio.sleep(1)

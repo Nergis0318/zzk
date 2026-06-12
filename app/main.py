@@ -216,7 +216,11 @@ async def _trigger_auto_convert(recording_id: int):
     delete_segs = bool(get_setting("auto_convert_delete_segments", False))
     playlist = _resolve_recording_playlist(rec.base_path, rec.playlist_path)
     if not playlist:
-        log_event(rec.channel_id, f"자동 변환 건너뜀 — 재생 목록 없음 (#{recording_id})", "warn")
+        log_event(
+            rec.channel_id,
+            f"자동 변환 건너뜀 — 재생 목록 없음 (#{recording_id})",
+            "warn",
+        )
         return
     try:
         await start_conversion(
@@ -322,9 +326,7 @@ async def monitor_loop():
                 log_event(
                     ch.channel_id, f"방송 감지 → 녹화 시작 (quality={ch.quality})"
                 )
-                await start_recording_for_channel(
-                    ch.channel_id, triggered_by="monitor"
-                )
+                await start_recording_for_channel(ch.channel_id, triggered_by="monitor")
         except Exception as e:
             log_event("system", f"monitor error: {e}", "error")
 
@@ -967,7 +969,9 @@ async def api_update_settings(payload: SettingsUpdate):
     if payload.auto_convert_format is not None:
         fmt = payload.auto_convert_format.lower().strip()
         if fmt not in SUPPORTED_FORMATS:
-            raise HTTPException(400, f"지원 형식: {', '.join(sorted(SUPPORTED_FORMATS))}")
+            raise HTTPException(
+                400, f"지원 형식: {', '.join(sorted(SUPPORTED_FORMATS))}"
+            )
         set_setting("auto_convert_format", fmt)
     if payload.auto_convert_delete_segments is not None:
         set_setting(

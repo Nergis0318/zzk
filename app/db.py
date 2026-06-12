@@ -7,7 +7,6 @@ Tables:
 
 from __future__ import annotations
 
-import orjson
 import sqlite3
 import time
 from contextlib import contextmanager
@@ -15,6 +14,8 @@ from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Optional
+
+import orjson
 
 DB_PATH = Path("data/zzk.db")
 

@@ -61,7 +61,9 @@ class ClipJob:
 
     @property
     def key(self) -> str:
-        return clip_job_key(self.recording_id, self.start_sec, self.end_sec, self.format)
+        return clip_job_key(
+            self.recording_id, self.start_sec, self.end_sec, self.format
+        )
 
 
 def clip_job_key(recording_id: int, start_sec: float, end_sec: float, fmt: str) -> str:
@@ -293,7 +295,9 @@ async def _run_ffmpeg(
             delete_hls_source(playlist)
     except FileNotFoundError:
         job.status = ConversionStatus.FAILED
-        job.error = "ffmpeg를 찾을 수 없습니다. PATH에 추가하거나 설정에서 경로를 지정하세요."
+        job.error = (
+            "ffmpeg를 찾을 수 없습니다. PATH에 추가하거나 설정에서 경로를 지정하세요."
+        )
     except Exception as e:
         job.status = ConversionStatus.FAILED
         job.error = str(e)

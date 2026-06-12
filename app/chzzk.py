@@ -7,12 +7,12 @@ Chzzk (치지직) API client for zzk.
 
 from __future__ import annotations
 
-import orjson
 import re
 from dataclasses import dataclass
 from typing import Any, Optional
 
 import httpx
+import orjson
 
 # Common headers to mimic browser (important for CDN)
 DEFAULT_HEADERS = {

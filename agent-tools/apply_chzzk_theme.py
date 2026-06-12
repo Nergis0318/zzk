@@ -177,10 +177,21 @@ for old, new in replacements:
     html = html.replace(old, new)
 
 # Brand-forward accents
-html = html.replace("border: 1.5px solid var(--arm);", "border: 1.5px solid var(--Content-Brand-Strong);")
-html = html.replace("box-shadow: 0 0 12px var(--arm-soft);", "box-shadow: 0 0 12px var(--Surface-Brand-Alpha-Base);")
-html = html.replace("box-shadow: 0 0 8px var(--arm-soft);", "box-shadow: 0 0 8px var(--Surface-Brand-Alpha-Base);")
-html = html.replace("outline: 2px solid var(--arm);", "outline: 2px solid var(--Content-Brand-Strong);")
+html = html.replace(
+    "border: 1.5px solid var(--arm);",
+    "border: 1.5px solid var(--Content-Brand-Strong);",
+)
+html = html.replace(
+    "box-shadow: 0 0 12px var(--arm-soft);",
+    "box-shadow: 0 0 12px var(--Surface-Brand-Alpha-Base);",
+)
+html = html.replace(
+    "box-shadow: 0 0 8px var(--arm-soft);",
+    "box-shadow: 0 0 8px var(--Surface-Brand-Alpha-Base);",
+)
+html = html.replace(
+    "outline: 2px solid var(--arm);", "outline: 2px solid var(--Content-Brand-Strong);"
+)
 
 html = html.replace(
     """            ::selection {
@@ -255,7 +266,7 @@ html = html.replace(
     'href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"',
     'href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"',
 )
-html = html.replace("<html lang=\"ko\">", '<html lang="ko" class="theme_dark">')
+html = html.replace('<html lang="ko">', '<html lang="ko" class="theme_dark">')
 html = html.replace(
     "zzk · the recorder's booth\n               single-file dark operations console",
     "zzk · Chzzk design system\n               single-file dark operations console",
