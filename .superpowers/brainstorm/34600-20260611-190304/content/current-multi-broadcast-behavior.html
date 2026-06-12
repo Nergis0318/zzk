@@ -1,0 +1,113 @@
+<h2>Current behavior: same-day multiple broadcasts / restarts</h2>
+<p class="subtitle">How zzk handles a streamer who goes live twice on the same calendar day, or restarts the stream after a crash/tech issue.</p>
+
+<div class="section">
+  <h3>Scenario A — Two separate lives (different titles)</h3>
+  <div class="mockup">
+    <div class="mockup-header">Timeline (2026-06-11)</div>
+    <div class="mockup-body" style="font-family: ui-monospace, monospace; font-size: 13px; line-height: 1.5;">
+      10:00 — Live ON “아침 방송”<br>
+      11:30 — Live ENDED (Chzzk status ENDED)<br>
+      11:45 — Live ON “점심 방송” (new live_id / new title)<br>
+      13:20 — Live ENDED
+    </div>
+  </div>
+  <div class="mockup">
+    <div class="mockup-header">What gets written today</div>
+    <div class="mockup-body" style="font-family: ui-monospace, monospace; font-size: 12px; background:#0f172a; padding:8px; border-radius:6px;">
+      recordings/<br>
+      └── 모카형/<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;2026-06-11/<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;├── 아침_방송.m3u8 + chunk/ (segments...)<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;└── 점심_방송.m3u8 + chunk/ (segments...)<br>
+      <br>
+      DB: two rows in recordings (both status=completed, different started_at)
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>Scenario B — Same title, stream restart (tech problem)</h3>
+  <div class="mockup">
+    <div class="mockup-header">Timeline</div>
+    <div class="mockup-body" style="font-family: ui-monospace, monospace; font-size: 13px; line-height: 1.5;">
+      20:00 — Live ON “저녁 방송”<br>
+      20:47 — Stream crashes / user restarts OBS → Chzzk sees brief OFF then new OPEN (new live session)<br>
+      20:48 — Monitor detects live again → starts second recorder
+    </div>
+  </div>
+  <div class="mockup">
+    <div class="mockup-header">Resulting files (current code)</div>
+    <div class="mockup-body" style="font-family: ui-monospace, monospace; font-size: 12px; background:#0f172a; padding:8px; border-radius:6px;">
+      recordings/모카형/2026-06-11/<br>
+      ├── 저녁_방송.m3u8 + chunk/ (first 47 min)<br>
+      └── 저녁_방송_204802.m3u8 + chunk/ (new session from 20:48)<br>
+      <br>
+      Two separate DB recordings. No link between them.
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>Current rules in code</h3>
+  <ul style="font-size:13px; line-height:1.6;">
+    <li>Every <code>start_recording_for_channel</code> creates a brand new <code>ChzzkRecorder</code> and a new DB row.</li>
+    <li><code>prepare_paths</code> + <code>_make_unique_playlist_name</code> only guarantees filename uniqueness by appending <code>_HHMMSS</code> or <code>_N</code> when the sanitized title already exists in that date folder.</li>
+    <li>Segments always land in a flat <code>chunk/</code> next to their own <code>.m3u8</code>. No cross-recording continuation.</li>
+    <li>Monitor will happily start a second recording for the same channel if it sees <code>is_live</code> and the channel_id is not currently in the <code>active</code> dict.</li>
+    <li>Playback is always per-.m3u8; there is no “master of the day” playlist that stitches multiple sessions.</li>
+  </ul>
+</div>
+
+<div class="section">
+  <p style="color:#f59e0b; font-size:13px;">Pain points often reported:</p>
+  <div class="pros-cons">
+    <div class="pros" style="border-color:#334155;">
+      <h4 style="color:#64748b;">What works</h4>
+      <ul style="font-size:12px;">
+        <li>Crash-safe per session (each .m3u8 + its chunks is independently playable)</li>
+        <li>Clear separation: different lives = different files</li>
+      </ul>
+    </div>
+    <div class="cons">
+      <h4>Problems</h4>
+      <ul style="font-size:12px;">
+        <li>Viewer has to open two players to watch “one evening”</li>
+        <li>UI shows N separate “recordings” for what felt like one broadcast</li>
+        <li>No automatic “continuation” when the same live title re-appears minutes later</li>
+        <li>Hard to answer “what did I record on 2026-06-11 for this channel?” as a single thing</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="options" data-multiselect>
+  <div class="option" data-choice="same-day-split-ok" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Same-day splits are usually fine</h3>
+      <p>I’m okay with multiple files per day. Just make sure the naming is clear and the UI groups them nicely.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="prefer-auto-merge" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Prefer automatic merge/continuation</h3>
+      <p>If the streamer restarts within N minutes and the title is “similar”, continue appending to the previous recording’s playlist instead of creating a second file.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="user-controlled" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>User-controlled (stop + “append” or “new” choice)</h3>
+      <p>When we detect a possible restart of the same broadcast, ask or offer a button: “Continue previous recording” vs “Start fresh recording”.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="always-split-explicit" onclick="toggleSelect(this)">
+    <div class="letter">D</div>
+    <div class="content">
+      <h3>Always split, but make the grouping obvious</h3>
+      <p>Keep separate files, but add a “session group” or “broadcast day” concept so the UI and file browser show “2026-06-11 저녁 방송 (2 parts)”.</p>
+    </div>
+  </div>
+</div>

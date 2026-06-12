@@ -1,0 +1,3610 @@
+<!doctype html>
+<html lang="ko" class="theme_dark">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="color-scheme" content="dark" />
+        <meta
+            name="description"
+            content="치지직 방송 자동 녹화기 · 로컬 콘솔"
+        />
+        <meta name="theme-color" content="#0e0f10" />
+        <title>지직 · zzk</title>
+        <link
+            rel="icon"
+            href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%230e0f10'/><rect x='6' y='6' width='20' height='20' rx='3' fill='none' stroke='%2300ffa3' stroke-width='2'/><circle cx='23' cy='9' r='2.2' fill='%23ff5454'/></svg>"
+        />
+        <link
+            href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
+            rel="stylesheet"
+        />
+        <link
+            href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            /* ============================================================
+               zzk · Chzzk design system
+               single-file dark operations console
+               ============================================================ */
+
+            :root {
+                /* Chzzk design tokens (dark) */
+                --Ref-Color-Amber-50: #cf9a12;
+                --Ref-Color-Amber-50-rgb: 207,154,18;
+                --Ref-Color-Blue-50: #3b8fd8;
+                --Ref-Color-Blue-50-rgb: 59,143,216;
+                --Ref-Color-BrandNeon-50: #00ffa3;
+                --Ref-Color-BrandNeon-50-rgb: 0,255,163;
+                --Ref-Color-BrandNeon-55: #00e693;
+                --Ref-Color-BrandNeon-55-rgb: 0,230,147;
+                --Ref-Color-BrandNeon-60: #00cc82;
+                --Ref-Color-BrandNeon-60-rgb: 0,204,130;
+                --Ref-Color-BrandNeon-70: #009962;
+                --Ref-Color-BrandNeon-70-rgb: 0,153,98;
+                --Ref-Color-BrandNeon-80: #006641;
+                --Ref-Color-BrandNeon-80-rgb: 0,102,65;
+                --Ref-Color-BrandNeon-85: #11382c;
+                --Ref-Color-BrandNeon-85-rgb: 17,56,44;
+                --Ref-Color-BrandNeon-90: #003321;
+                --Ref-Color-BrandNeon-90-rgb: 0,51,33;
+                --Ref-Color-CoolGray-10: #dfe2ea;
+                --Ref-Color-CoolGray-10-rgb: 223,226,234;
+                --Ref-Color-CoolGray-20: #c9cedc;
+                --Ref-Color-CoolGray-20-rgb: 201,206,220;
+                --Ref-Color-CoolGray-30: #9da5b6;
+                --Ref-Color-CoolGray-30-rgb: 157,165,182;
+                --Ref-Color-CoolGray-50: #697183;
+                --Ref-Color-CoolGray-50-rgb: 105,113,131;
+                --Ref-Color-CoolGray-60: #545a69;
+                --Ref-Color-CoolGray-60-rgb: 84,90,105;
+                --Ref-Color-Neutral-0: #fff;
+                --Ref-Color-Neutral-0-rgb: 255,255,255;
+                --Ref-Color-Neutral-10: #c0c1c2;
+                --Ref-Color-Neutral-10-rgb: 192,193,194;
+                --Ref-Color-Neutral-20: #979899;
+                --Ref-Color-Neutral-20-rgb: 151,152,153;
+                --Ref-Color-Neutral-30: #6d6e70;
+                --Ref-Color-Neutral-30-rgb: 109,110,112;
+                --Ref-Color-Neutral-40: #4d4d4d;
+                --Ref-Color-Neutral-40-rgb: 77,77,77;
+                --Ref-Color-Neutral-50: #2e3033;
+                --Ref-Color-Neutral-50-rgb: 46,48,51;
+                --Ref-Color-Neutral-55: #2a2c2f;
+                --Ref-Color-Neutral-55-rgb: 42,44,47;
+                --Ref-Color-Neutral-60: #202224;
+                --Ref-Color-Neutral-60-rgb: 32,34,36;
+                --Ref-Color-Neutral-70: #1c1d1f;
+                --Ref-Color-Neutral-70-rgb: 28,29,31;
+                --Ref-Color-Neutral-90: #141517;
+                --Ref-Color-Neutral-90-rgb: 20,21,23;
+                --Ref-Color-Neutral-95: #0e0f10;
+                --Ref-Color-Neutral-95-rgb: 14,15,16;
+                --Ref-Color-Ochre-50: #d9b04f;
+                --Ref-Color-Ochre-50-rgb: 217,176,79;
+                --Ref-Color-Red-30: #ff5454;
+                --Ref-Color-Red-30-rgb: 255,84,84;
+                --Ref-Color-Red-55: #e02020;
+                --Ref-Color-Red-55-rgb: 224,32,32;
+                --Ref-Color-Violet-40: #7a7aff;
+                --Ref-Color-Violet-40-rgb: 122,122,255;
+                --Ref-Color-Violet-70: #2f2783;
+                --Ref-Color-Violet-70-rgb: 47,39,131;
+                --Ref-Color-Yellow-50: #f2da00;
+                --Ref-Color-Yellow-50-rgb: 242,218,0;
+
+                --Background-Neutral-Weak:var(--Ref-Color-Neutral-95);
+                --Background-Neutral-Base:var(--Ref-Color-Neutral-90);
+                --Surface-Neutral-Weakest:var(--Ref-Color-Neutral-95);
+                --Surface-Neutral-Weakest-rgb:var(--Ref-Color-Neutral-95-rgb);
+                --Surface-Neutral-Weaker:var(--Ref-Color-Neutral-70);
+                --Surface-Neutral-Weaker-rgb:var(--Ref-Color-Neutral-70-rgb);
+                --Surface-Neutral-Weak:var(--Ref-Color-Neutral-60);
+                --Surface-Neutral-Weak-rgb:var(--Ref-Color-Neutral-60-rgb);
+                --Surface-Neutral-Subtle:var(--Ref-Color-Neutral-55);
+                --Surface-Neutral-Subtle-rgb:var(--Ref-Color-Neutral-55-rgb);
+                --Surface-Neutral-Base:var(--Ref-Color-Neutral-50);
+                --Surface-Neutral-Base-rgb:var(--Ref-Color-Neutral-50-rgb);
+                --Surface-Neutral-Strong:var(--Ref-Color-Neutral-40);
+                --Surface-Neutral-Strong-rgb:var(--Ref-Color-Neutral-40-rgb);
+                --Surface-Neutral-Stronger:var(--Ref-Color-Neutral-20);
+                --Surface-Neutral-Stronger-rgb:var(--Ref-Color-Neutral-20-rgb);
+                --Surface-Neutral-Strongest:var(--Ref-Color-CoolGray-10);
+                --Surface-Neutral-Strongest-rgb:var(--Ref-Color-CoolGray-10-rgb);
+                --Surface-Brand-Weakest:var(--Ref-Color-BrandNeon-90);
+                --Surface-Brand-Weakest-rgb:var(--Ref-Color-BrandNeon-90-rgb);
+                --Surface-Brand-Weaker:var(--Ref-Color-BrandNeon-85);
+                --Surface-Brand-Weaker-rgb:var(--Ref-Color-BrandNeon-85-rgb);
+                --Surface-Brand-Weak:var(--Ref-Color-BrandNeon-80);
+                --Surface-Brand-Weak-rgb:var(--Ref-Color-BrandNeon-80-rgb);
+                --Surface-Brand-Base:var(--Ref-Color-BrandNeon-70);
+                --Surface-Brand-Base-rgb:var(--Ref-Color-BrandNeon-70-rgb);
+                --Surface-Brand-Strong:var(--Ref-Color-BrandNeon-60);
+                --Surface-Brand-Strong-rgb:var(--Ref-Color-BrandNeon-60-rgb);
+                --Surface-Brand-Stronger:var(--Ref-Color-BrandNeon-55);
+                --Surface-Brand-Stronger-rgb:var(--Ref-Color-BrandNeon-55-rgb);
+                --Surface-Brand-Strongest:var(--Ref-Color-BrandNeon-50);
+                --Surface-Brand-Strongest-rgb:var(--Ref-Color-BrandNeon-50-rgb);
+                --Surface-Neutral-Alpha-Weakest:hsla(0,0%,100%,.05);
+                --Surface-Neutral-Alpha-Weaker:hsla(0,0%,100%,.1);
+                --Surface-Neutral-Alpha-Weak:hsla(0,0%,100%,.15);
+                --Surface-Neutral-Alpha-Base:hsla(0,0%,100%,.3);
+                --Surface-Neutral-Alpha-Strong:hsla(0,0%,100%,.5);
+                --Surface-Neutral-Alpha-Stronger:hsla(0,0%,100%,.8);
+                --Surface-Neutral-Alpha-Strongest:hsla(0,0%,100%,.9);
+                --Surface-Neutral-Alpha-Inverse-Weakest:rgba(0,0,0,.05);
+                --Surface-Neutral-Alpha-Inverse-Weaker:rgba(0,0,0,.1);
+                --Surface-Neutral-Alpha-Inverse-Weak:rgba(0,0,0,.15);
+                --Surface-Neutral-Alpha-Inverse-Base:rgba(0,0,0,.3);
+                --Surface-Neutral-Alpha-Inverse-Strong:rgba(0,0,0,.5);
+                --Surface-Neutral-Alpha-Inverse-Stronger:rgba(0,0,0,.8);
+                --Surface-Neutral-Alpha-Inverse-Strongest:rgba(0,0,0,.9);
+                --Surface-Brand-Alpha-Weakest:rgba(var(--Ref-Color-BrandNeon-50-rgb),0.05);
+                --Surface-Brand-Alpha-Weaker:rgba(var(--Ref-Color-BrandNeon-50-rgb),0.1);
+                --Surface-Brand-Alpha-Weak:rgba(var(--Ref-Color-BrandNeon-50-rgb),0.15);
+                --Surface-Brand-Alpha-Base:rgba(var(--Ref-Color-BrandNeon-50-rgb),0.3);
+                --Surface-Brand-Alpha-Strong:rgba(var(--Ref-Color-BrandNeon-50-rgb),0.5);
+                --Surface-Brand-Alpha-Stronger:rgba(var(--Ref-Color-BrandNeon-50-rgb),0.8);
+                --Surface-Brand-Alpha-Strongest:rgba(var(--Ref-Color-BrandNeon-50-rgb),0.9);
+                --Surface-Accent-Violet-Weak:var(--Ref-Color-Violet-70);
+                --Surface-Accent-Violet-Weak-rgb:var(--Ref-Color-Violet-70-rgb);
+                --Surface-Interaction-Darken-Normal:transparent;
+                --Surface-Interaction-Darken-Hovered:rgba(0,0,0,.05);
+                --Surface-Interaction-Darken-Selected:rgba(0,0,0,.12);
+                --Surface-Interaction-Lighten-Normal:hsla(0,0%,100%,0);
+                --Surface-Interaction-Lighten-Hovered:hsla(0,0%,100%,.05);
+                --Surface-Interaction-Lighten-Selected:hsla(0,0%,100%,.12);
+                --Content-Neutral-Primary:var(--Ref-Color-Neutral-0);
+                --Content-Neutral-Primary-rgb:var(--Ref-Color-Neutral-0-rgb);
+                --Content-Neutral-Inverse:var(--Ref-Color-Neutral-95);
+                --Content-Neutral-Inverse-rgb:var(--Ref-Color-Neutral-95-rgb);
+                --Content-Neutral-Cool-Weaker:var(--Ref-Color-CoolGray-60);
+                --Content-Neutral-Cool-Weaker-rgb:var(--Ref-Color-CoolGray-60-rgb);
+                --Content-Neutral-Cool-Weak:var(--Ref-Color-CoolGray-50);
+                --Content-Neutral-Cool-Weak-rgb:var(--Ref-Color-CoolGray-50-rgb);
+                --Content-Neutral-Cool-Base:var(--Ref-Color-CoolGray-30);
+                --Content-Neutral-Cool-Base-rgb:var(--Ref-Color-CoolGray-30-rgb);
+                --Content-Neutral-Cool-Strong:var(--Ref-Color-CoolGray-20);
+                --Content-Neutral-Cool-Strong-rgb:var(--Ref-Color-CoolGray-20-rgb);
+                --Content-Neutral-Cool-Stronger:var(--Ref-Color-CoolGray-10);
+                --Content-Neutral-Cool-Stronger-rgb:var(--Ref-Color-CoolGray-10-rgb);
+                --Content-Neutral-Warm-Weaker:var(--Ref-Color-Neutral-60);
+                --Content-Neutral-Warm-Weaker-rgb:var(--Ref-Color-Neutral-60-rgb);
+                --Content-Neutral-Warm-Weak:var(--Ref-Color-Neutral-50);
+                --Content-Neutral-Warm-Weak-rgb:var(--Ref-Color-Neutral-50-rgb);
+                --Content-Neutral-Warm-Base:var(--Ref-Color-Neutral-30);
+                --Content-Neutral-Warm-Base-rgb:var(--Ref-Color-Neutral-30-rgb);
+                --Content-Neutral-Warm-Strong:var(--Ref-Color-Neutral-20);
+                --Content-Neutral-Warm-Strong-rgb:var(--Ref-Color-Neutral-20-rgb);
+                --Content-Neutral-Warm-Stronger:var(--Ref-Color-Neutral-10);
+                --Content-Neutral-Warm-Stronger-rgb:var(--Ref-Color-Neutral-10-rgb);
+                --Content-Brand-Weaker:var(--Ref-Color-BrandNeon-70);
+                --Content-Brand-Weaker-rgb:var(--Ref-Color-BrandNeon-70-rgb);
+                --Content-Brand-Weak:var(--Ref-Color-BrandNeon-60);
+                --Content-Brand-Weak-rgb:var(--Ref-Color-BrandNeon-60-rgb);
+                --Content-Brand-Base:var(--Ref-Color-BrandNeon-55);
+                --Content-Brand-Base-rgb:var(--Ref-Color-BrandNeon-55-rgb);
+                --Content-Brand-Strong:var(--Ref-Color-BrandNeon-50);
+                --Content-Brand-Strong-rgb:var(--Ref-Color-BrandNeon-50-rgb);
+                --Content-Neutral-Alpha-Weak:hsla(0,0%,100%,.15);
+                --Content-Neutral-Alpha-Base:hsla(0,0%,100%,.3);
+                --Content-Neutral-Alpha-Strong:hsla(0,0%,100%,.5);
+                --Content-Neutral-Alpha-Stronger:hsla(0,0%,100%,.8);
+                --Content-Neutral-Alpha-Strongest:hsla(0,0%,100%,.9);
+                --Content-Neutral-Alpha-Inverse-Weak:rgba(0,0,0,.15);
+                --Content-Neutral-Alpha-Inverse-Base:rgba(0,0,0,.3);
+                --Content-Neutral-Alpha-Inverse-Strong:rgba(0,0,0,.5);
+                --Content-Neutral-Alpha-Inverse-Stronger:rgba(0,0,0,.8);
+                --Content-Brand-Alpha-Weak:rgba(var(--Ref-Color-BrandNeon-50-rgb),0.15);
+                --Content-Brand-Alpha-Weakest:rgba(var(--Ref-Color-BrandNeon-50-rgb),0.05);
+                --Content-Brand-Alpha-Weaker:rgba(var(--Ref-Color-BrandNeon-50-rgb),0.1);
+                --Content-Brand-Alpha-Base:rgba(var(--Ref-Color-BrandNeon-50-rgb),0.3);
+                --Content-Brand-Alpha-Strong:rgba(var(--Ref-Color-BrandNeon-50-rgb),0.5);
+                --Content-Brand-Alpha-Stronger:rgba(var(--Ref-Color-BrandNeon-50-rgb),0.8);
+                --Content-Brand-Alpha-Strongest:rgba(var(--Ref-Color-BrandNeon-50-rgb),0.9);
+                --Content-Accent-Blue:var(--Ref-Color-Blue-50);
+                --Content-Accent-Blue-rgb:var(--Ref-Color-Blue-50-rgb);
+                --Content-Accent-Cheese:var(--Ref-Color-Yellow-50);
+                --Content-Accent-Cheese-rgb:var(--Ref-Color-Yellow-50-rgb);
+                --Content-Accent-Prime-Base:var(--Ref-Color-Amber-50);
+                --Content-Accent-Prime-Base-rgb:var(--Ref-Color-Amber-50-rgb);
+                --Content-Accent-Prime-Strong:var(--Ref-Color-Ochre-50);
+                --Content-Accent-Prime-Strong-rgb:var(--Ref-Color-Ochre-50-rgb);
+                --Content-Accent-Red-Weak:var(--Ref-Color-Red-55);
+                --Content-Accent-Red-Weak-rgb:var(--Ref-Color-Red-55-rgb);
+                --Content-Accent-Red-Strong:var(--Ref-Color-Red-30);
+                --Content-Accent-Red-Strong-rgb:var(--Ref-Color-Red-30-rgb);
+                --Content-Accent-Violet-Strong:var(--Ref-Color-Violet-40);
+                --Content-Accent-Violet-Strong-rgb:var(--Ref-Color-Violet-40-rgb);
+                --Border-Neutral-Weakest:var(--Ref-Color-Neutral-95);
+                --Border-Neutral-Weakest-rgb:var(--Ref-Color-Neutral-95-rgb);
+                --Border-Neutral-Weaker:var(--Ref-Color-Neutral-60);
+                --Border-Neutral-Weaker-rgb:var(--Ref-Color-Neutral-60-rgb);
+                --Border-Neutral-Weak:var(--Ref-Color-Neutral-50);
+                --Border-Neutral-Weak-rgb:var(--Ref-Color-Neutral-50-rgb);
+                --Border-Neutral-Base:var(--Ref-Color-Neutral-40);
+                --Border-Neutral-Base-rgb:var(--Ref-Color-Neutral-40-rgb);
+                --Border-Neutral-Strong:var(--Ref-Color-CoolGray-50);
+                --Border-Neutral-Strong-rgb:var(--Ref-Color-CoolGray-50-rgb);
+                --Border-Neutral-Stronger:var(--Ref-Color-CoolGray-20);
+                --Border-Neutral-Stronger-rgb:var(--Ref-Color-CoolGray-20-rgb);
+                --Border-Neutral-Strongest:var(--Ref-Color-Neutral-0);
+                --Border-Neutral-Strongest-rgb:var(--Ref-Color-Neutral-0-rgb);
+                --Border-Brand-Weaker:var(--Ref-Color-BrandNeon-80);
+                --Border-Brand-Weaker-rgb:var(--Ref-Color-BrandNeon-80-rgb);
+                --Border-Brand-Weak:var(--Ref-Color-BrandNeon-70);
+                --Border-Brand-Weak-rgb:var(--Ref-Color-BrandNeon-70-rgb);
+                --Border-Brand-Base:var(--Ref-Color-BrandNeon-55);
+                --Border-Brand-Base-rgb:var(--Ref-Color-BrandNeon-55-rgb);
+                --Border-Brand-Strong:var(--Ref-Color-BrandNeon-50);
+                --Border-Brand-Strong-rgb:var(--Ref-Color-BrandNeon-50-rgb);
+                --Border-Neutral-Alpha-Weakest:hsla(0,0%,100%,.05);
+                --Border-Neutral-Alpha-Weaker:hsla(0,0%,100%,.1);
+                --Border-Neutral-Alpha-Weak:hsla(0,0%,100%,.15);
+                --Border-Neutral-Alpha-Base:hsla(0,0%,100%,.3);
+                --Border-Neutral-Alpha-Inverse-Weakest:rgba(0,0,0,.05);
+                --Border-Neutral-Alpha-Inverse-Weaker:rgba(0,0,0,.1);
+                --Border-Neutral-Alpha-Inverse-Weak:rgba(0,0,0,.15);
+                --Border-Neutral-Alpha-Inverse-Base:rgba(0,0,0,.3);
+                --Border-Brand-Alpha-Weakest:rgba(var(--Ref-Color-BrandNeon-50-rgb),0.05);
+                --Border-Brand-Alpha-Weaker:rgba(var(--Ref-Color-BrandNeon-50-rgb),0.1);
+                --Border-Brand-Alpha-Weak:rgba(var(--Ref-Color-BrandNeon-50-rgb),0.15);
+                --Border-Brand-Alpha-Base:rgba(var(--Ref-Color-BrandNeon-50-rgb),0.3);
+                --Shadow-Base:rgba(0,0,0,.2);
+                --Shadow-Strong:rgba(0,0,0,.3);
+
+                /* zzk aliases → Chzzk semantic tokens */
+                --bg: var(--Background-Neutral-Weak);
+                --bg-1: var(--Surface-Neutral-Weak);
+                --bg-2: var(--Surface-Neutral-Base);
+                --bg-3: var(--Surface-Neutral-Strong);
+                --line: var(--Border-Neutral-Base);
+                --line-soft: var(--Border-Neutral-Weak);
+
+                --ink-0: var(--Content-Neutral-Primary);
+                --ink-1: var(--Content-Neutral-Cool-Base);
+                --ink-2: var(--Content-Neutral-Cool-Weak);
+                --ink-3: var(--Content-Neutral-Cool-Weaker);
+                --ink-4: var(--Content-Neutral-Warm-Weaker);
+
+                --rec: var(--Content-Accent-Red-Strong);
+                --rec-glow: rgba(var(--Content-Accent-Red-Strong-rgb), 0.18);
+                --live: var(--Content-Brand-Strong);
+                --arm: var(--Content-Accent-Prime-Base);
+                --arm-soft: var(--Surface-Brand-Alpha-Weak);
+                --ok: var(--Content-Brand-Strong);
+                --info: var(--Content-Accent-Blue);
+
+                /* shape */
+                --r-1: 6px;
+                --r-2: 10px;
+                --r-3: 14px;
+
+                /* type */
+                --sans:
+                    "Pretendard Variable", Pretendard, -apple-system,
+                    BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR",
+                    system-ui, sans-serif;
+                --mono:
+                    "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas,
+                    monospace;
+
+                /* spacing rhythm */
+                --s-1: 4px;
+                --s-2: 8px;
+                --s-3: 12px;
+                --s-4: 16px;
+                --s-5: 24px;
+                --s-6: 36px;
+                --s-7: 56px;
+
+                /* motion */
+                --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+                --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+            }
+
+            * {
+                box-sizing: border-box;
+            }
+
+            html,
+            body {
+                margin: 0;
+                padding: 0;
+                background: var(--bg);
+                color: var(--ink-1);
+                font-family: var(--sans);
+                font-size: 14px;
+                line-height: 1.5;
+                font-feature-settings: "ss02", "ss03", "cv11";
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+            }
+
+            /* hairline grid texture — broadcast gear */
+            body::before {
+                content: "";
+                position: fixed;
+                inset: 0;
+                pointer-events: none;
+                z-index: 0;
+                background-image:
+                    linear-gradient(
+                        to right,
+                        hsla(0, 0%, 100%, 0.012) 1px,
+                        transparent 1px
+                    ),
+                    linear-gradient(
+                        to bottom,
+                        hsla(0, 0%, 100%, 0.012) 1px,
+                        transparent 1px
+                    );
+                background-size: 32px 32px;
+                mask-image: radial-gradient(
+                    ellipse at center,
+                    black 30%,
+                    transparent 90%
+                );
+            }
+
+            ::selection {
+                background: var(--Surface-Brand-Alpha-Strong);
+                color: var(--Content-Neutral-Primary);
+            }
+
+            /* ============== LAYOUT ============== */
+
+            .app {
+                position: relative;
+                z-index: 1;
+                display: grid;
+                grid-template-columns: 240px 1fr 340px;
+                grid-template-rows: auto 1fr;
+                grid-template-areas:
+                    "rail head head"
+                    "rail main flow";
+                min-height: 100vh;
+            }
+
+            @media (max-width: 1200px) {
+                .app {
+                    grid-template-columns: 200px 1fr;
+                    grid-template-areas:
+                        "rail head"
+                        "rail main"
+                        "rail flow";
+                }
+            }
+            @media (max-width: 820px) {
+                .app {
+                    grid-template-columns: 1fr;
+                    grid-template-areas:
+                        "head"
+                        "main"
+                        "flow"
+                        "rail";
+                }
+            }
+
+            /* ============== LEFT RAIL ============== */
+
+            .rail {
+                grid-area: rail;
+                background: linear-gradient(
+                    180deg,
+                    var(--bg-1) 0%,
+                    var(--bg) 100%
+                );
+                border-right: 1px solid var(--line-soft);
+                padding: var(--s-5) var(--s-4);
+                display: flex;
+                flex-direction: column;
+                gap: var(--s-6);
+            }
+
+            @media (max-width: 820px) {
+                .rail {
+                    border-right: none;
+                    border-top: 1px solid var(--line-soft);
+                    flex-direction: row;
+                    flex-wrap: wrap;
+                    padding: var(--s-4);
+                }
+            }
+
+            .brand {
+                display: flex;
+                align-items: center;
+                gap: var(--s-3);
+            }
+
+            .brand-mark {
+                width: 36px;
+                height: 36px;
+                border-radius: 9px;
+                background: radial-gradient(
+                    circle at 30% 30%,
+                    var(--Surface-Neutral-Strong),
+                    var(--Surface-Neutral-Weaker) 70%
+                );
+                border: 1px solid var(--line);
+                display: grid;
+                place-items: center;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .brand-mark::after {
+                content: "";
+                position: absolute;
+                inset: 6px;
+                border-radius: 4px;
+                border: 1.5px solid var(--Content-Brand-Strong);
+                box-shadow: 0 0 12px var(--Surface-Brand-Alpha-Base);
+            }
+
+            .brand-mark::before {
+                content: "";
+                position: absolute;
+                width: 6px;
+                height: 6px;
+                background: var(--rec);
+                border-radius: 50%;
+                top: 9px;
+                right: 9px;
+                box-shadow: 0 0 8px var(--rec-glow);
+                animation: blink 2.4s var(--ease-in-out) infinite;
+            }
+
+            @keyframes blink {
+                0%,
+                100% {
+                    opacity: 1;
+                }
+                50% {
+                    opacity: 0.25;
+                }
+            }
+
+            .brand-text {
+                display: flex;
+                flex-direction: column;
+                line-height: 1.1;
+            }
+            .brand-text .ko {
+                font-size: 18px;
+                font-weight: 700;
+                color: var(--ink-0);
+                letter-spacing: -0.02em;
+            }
+            .brand-text .id {
+                font-family: var(--mono);
+                font-size: 10px;
+                color: var(--ink-3);
+                letter-spacing: 0.18em;
+                text-transform: uppercase;
+                margin-top: 2px;
+            }
+
+            .rail-section {
+                display: flex;
+                flex-direction: column;
+                gap: var(--s-2);
+            }
+            .rail-label {
+                font-family: var(--mono);
+                font-size: 10px;
+                letter-spacing: 0.18em;
+                text-transform: uppercase;
+                color: var(--ink-3);
+                padding-left: var(--s-2);
+            }
+
+            .rail-stat {
+                background: var(--bg-1);
+                border: 1px solid var(--line-soft);
+                border-radius: var(--r-2);
+                padding: var(--s-3) var(--s-4);
+                display: flex;
+                flex-direction: column;
+                gap: 2px;
+            }
+            .rail-stat .v {
+                font-family: var(--mono);
+                font-size: 24px;
+                font-weight: 600;
+                color: var(--ink-0);
+                font-variant-numeric: tabular-nums;
+                line-height: 1.1;
+            }
+            .rail-stat .v.rec {
+                color: var(--rec);
+            }
+            .rail-stat .v.arm {
+                color: var(--arm);
+            }
+            .rail-stat .l {
+                font-size: 11px;
+                color: var(--ink-3);
+            }
+
+            .rail-output {
+                background: var(--bg-1);
+                border: 1px solid var(--line-soft);
+                border-radius: var(--r-2);
+                padding: var(--s-3) var(--s-4);
+                display: flex;
+                flex-direction: column;
+                gap: 2px;
+            }
+            .rail-output .path {
+                font-family: var(--mono);
+                font-size: 12px;
+                color: var(--ink-1);
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+            .rail-output button {
+                background: none;
+                border: none;
+                color: var(--ink-3);
+                font-size: 11px;
+                padding: 0;
+                text-align: left;
+                cursor: pointer;
+                margin-top: 4px;
+                font-family: var(--mono);
+            }
+            .rail-output button:hover {
+                color: var(--Content-Brand-Strong);
+            }
+
+            .rail-foot {
+                margin-top: auto;
+                font-family: var(--mono);
+                font-size: 10px;
+                color: var(--ink-4);
+                line-height: 1.6;
+            }
+            .rail-foot .dot {
+                display: inline-block;
+                width: 6px;
+                height: 6px;
+                border-radius: 50%;
+                background: var(--ok);
+                margin-right: 6px;
+                vertical-align: middle;
+            }
+            @media (max-width: 820px) {
+                .rail-foot {
+                    display: none;
+                }
+            }
+
+            /* ============== TOP BAR ============== */
+
+            .topbar {
+                grid-area: head;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: var(--s-4) var(--s-6);
+                border-bottom: 1px solid var(--line-soft);
+                background: rgba(var(--Surface-Neutral-Weakest-rgb), 0.6);
+                backdrop-filter: blur(8px);
+                gap: var(--s-4);
+            }
+            @media (max-width: 820px) {
+                .topbar {
+                    padding: var(--s-3) var(--s-4);
+                }
+            }
+
+            .crumbs {
+                display: flex;
+                align-items: baseline;
+                gap: var(--s-3);
+                font-family: var(--mono);
+                font-size: 12px;
+                color: var(--ink-3);
+            }
+            .crumbs b {
+                color: var(--ink-0);
+                font-weight: 500;
+                letter-spacing: 0.04em;
+            }
+            .crumbs .sep {
+                color: var(--ink-4);
+            }
+            .crumbs .live-now {
+                color: var(--rec);
+            }
+
+            .actions {
+                display: flex;
+                gap: var(--s-2);
+            }
+
+            /* ============== BUTTONS ============== */
+
+            .btn {
+                display: inline-flex;
+                align-items: center;
+                gap: var(--s-2);
+                height: 34px;
+                padding: 0 var(--s-4);
+                border-radius: var(--r-2);
+                border: 1px solid var(--line);
+                background: var(--bg-1);
+                color: var(--ink-1);
+                font: 500 12.5px/1 var(--sans);
+                cursor: pointer;
+                transition:
+                    background 0.12s var(--ease-out),
+                    border-color 0.12s var(--ease-out),
+                    transform 0.12s var(--ease-out),
+                    color 0.12s var(--ease-out);
+                white-space: nowrap;
+            }
+            .btn:hover {
+                background: var(--bg-2);
+                border-color: var(--line);
+                color: var(--ink-0);
+            }
+            .btn:active {
+                transform: translateY(1px);
+            }
+            .btn:focus-visible {
+                outline: 2px solid var(--Content-Brand-Strong);
+                outline-offset: 2px;
+            }
+            .btn .ic {
+                font-size: 11px;
+                color: var(--ink-2);
+            }
+            .btn:hover .ic {
+                color: var(--ink-0);
+            }
+
+            .btn-primary {
+                background: var(--Content-Brand-Strong);
+                color: var(--Content-Neutral-Inverse);
+                border-color: var(--Content-Brand-Strong);
+            }
+            .btn-primary:hover {
+                background: var(--Content-Brand-Base);
+                border-color: var(--Content-Brand-Base);
+                color: var(--Content-Neutral-Inverse);
+            }
+            .btn-primary .ic {
+                color: var(--Content-Neutral-Inverse);
+            }
+
+            .btn-rec {
+                background: var(--rec);
+                color: var(--Content-Neutral-Inverse);
+                border-color: var(--rec);
+                box-shadow: 0 0 0 0 var(--rec-glow);
+            }
+            .btn-rec:hover {
+                background: var(--Content-Accent-Red-Weak);
+                color: white;
+            }
+
+            .btn-danger {
+                color: var(--Content-Accent-Red-Weak);
+            }
+            .btn-danger:hover {
+                color: var(--rec);
+                border-color: rgba(var(--Content-Accent-Red-Strong-rgb), 0.4);
+                background: rgba(var(--Content-Accent-Red-Strong-rgb), 0.06);
+            }
+
+            .btn-ghost {
+                background: transparent;
+                border-color: transparent;
+                color: var(--ink-2);
+            }
+            .btn-ghost:hover {
+                background: var(--bg-1);
+                color: var(--ink-0);
+            }
+
+            .btn-sm {
+                height: 28px;
+                padding: 0 var(--s-3);
+                font-size: 11.5px;
+            }
+
+            .btn-icon {
+                width: 34px;
+                padding: 0;
+                justify-content: center;
+            }
+            .btn-icon.btn-sm {
+                width: 28px;
+            }
+
+            /* ============== MAIN ============== */
+
+            .main {
+                grid-area: main;
+                padding: var(--s-5) var(--s-6);
+                display: flex;
+                flex-direction: column;
+                gap: var(--s-6);
+                min-width: 0;
+            }
+            @media (max-width: 820px) {
+                .main {
+                    padding: var(--s-4);
+                }
+            }
+
+            .section-head {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: var(--s-3);
+            }
+            .section-head h2 {
+                margin: 0;
+                font-size: 13px;
+                font-weight: 600;
+                color: var(--ink-1);
+                letter-spacing: 0.02em;
+            }
+            .section-head h2 .count {
+                font-family: var(--mono);
+                font-size: 11px;
+                color: var(--ink-3);
+                margin-left: var(--s-2);
+                font-weight: 400;
+            }
+            .section-head .meta {
+                font-family: var(--mono);
+                font-size: 11px;
+                color: var(--ink-3);
+            }
+
+            /* ============== CHANNEL CARDS ============== */
+
+            .channels {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+                gap: var(--s-3);
+            }
+
+            .ch-card {
+                background: var(--bg-1);
+                border: 1px solid var(--line-soft);
+                border-radius: var(--r-3);
+                padding: var(--s-4);
+                display: flex;
+                flex-direction: column;
+                gap: var(--s-3);
+                position: relative;
+                transition:
+                    border-color 0.15s var(--ease-out),
+                    background 0.15s var(--ease-out),
+                    transform 0.2s var(--ease-out);
+            }
+            .ch-card:hover {
+                border-color: var(--line);
+                background: var(--bg-2);
+            }
+
+            .ch-card.is-rec {
+                border-color: rgba(var(--Content-Accent-Red-Strong-rgb), 0.45);
+                background:
+                    linear-gradient(
+                        180deg,
+                        rgba(var(--Content-Accent-Red-Strong-rgb), 0.06) 0%,
+                        transparent 60%
+                    ),
+                    var(--bg-1);
+            }
+            .ch-card.is-rec::before {
+                content: "";
+                position: absolute;
+                left: 0;
+                top: var(--s-4);
+                bottom: var(--s-4);
+                width: 2px;
+                background: var(--rec);
+                border-radius: 0 2px 2px 0;
+                box-shadow: 0 0 12px var(--rec-glow);
+            }
+
+            .ch-head {
+                display: flex;
+                align-items: center;
+                gap: var(--s-3);
+            }
+            .ch-avatar {
+                width: 36px;
+                height: 36px;
+                border-radius: 50%;
+                background: var(--bg-2);
+                flex: 0 0 36px;
+                overflow: hidden;
+                display: grid;
+                place-items: center;
+                color: var(--ink-2);
+                font-size: 14px;
+                border: 1px solid var(--line-soft);
+            }
+            .ch-avatar img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+            .ch-name {
+                flex: 1;
+                min-width: 0;
+            }
+            .ch-name .n {
+                font-size: 14px;
+                font-weight: 600;
+                color: var(--ink-0);
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            .ch-name .id {
+                font-family: var(--mono);
+                font-size: 10.5px;
+                color: var(--ink-3);
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .ch-pill {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                font-family: var(--mono);
+                font-size: 10.5px;
+                text-transform: uppercase;
+                letter-spacing: 0.1em;
+                padding: 4px 8px;
+                border-radius: 999px;
+                border: 1px solid var(--line-soft);
+                color: var(--ink-2);
+                background: var(--bg-1);
+                white-space: nowrap;
+            }
+            .ch-pill .dot {
+                width: 6px;
+                height: 6px;
+                border-radius: 50%;
+                background: var(--ink-4);
+            }
+            .ch-pill.is-live .dot {
+                background: var(--live);
+                box-shadow: 0 0 0 3px var(--Surface-Brand-Alpha-Weaker);
+            }
+            .ch-pill.is-live {
+                color: var(--live);
+                border-color: var(--Border-Brand-Alpha-Weak);
+            }
+            .ch-pill.is-rec .dot {
+                background: var(--rec);
+                box-shadow: 0 0 0 3px var(--rec-glow);
+                animation: blink 1.6s var(--ease-in-out) infinite;
+            }
+            .ch-pill.is-rec {
+                color: var(--rec);
+                border-color: rgba(var(--Content-Accent-Red-Strong-rgb), 0.4);
+            }
+
+            .ch-tags {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+            .ch-tag {
+                font-family: var(--mono);
+                font-size: 10.5px;
+                color: var(--ink-2);
+                padding: 3px 8px;
+                background: var(--bg-2);
+                border: 1px solid var(--line-soft);
+                border-radius: 4px;
+            }
+            .ch-tag.arm {
+                color: var(--arm);
+                border-color: var(--Border-Brand-Alpha-Base);
+                background: var(--arm-soft);
+            }
+
+            .ch-meter {
+                display: flex;
+                align-items: center;
+                gap: var(--s-3);
+                padding-top: var(--s-2);
+                border-top: 1px dashed var(--line-soft);
+                font-family: var(--mono);
+                font-size: 11px;
+                color: var(--ink-2);
+            }
+            .ch-meter .lbl {
+                color: var(--ink-3);
+                text-transform: uppercase;
+                letter-spacing: 0.1em;
+            }
+            .ch-meter .val {
+                color: var(--ink-0);
+                font-variant-numeric: tabular-nums;
+            }
+            .ch-meter .bar {
+                flex: 1;
+                height: 4px;
+                background: var(--bg-2);
+                border-radius: 2px;
+                overflow: hidden;
+                position: relative;
+            }
+            .ch-meter .bar .fill {
+                position: absolute;
+                inset: 0;
+                width: 30%;
+                background: linear-gradient(90deg, transparent, var(--rec));
+                animation: meter 3s linear infinite;
+            }
+            @keyframes meter {
+                0% {
+                    transform: translateX(-100%);
+                    width: 30%;
+                }
+                100% {
+                    transform: translateX(400%);
+                    width: 30%;
+                }
+            }
+
+            .ch-actions {
+                display: flex;
+                gap: var(--s-2);
+                margin-top: var(--s-1);
+            }
+            .ch-actions .btn {
+                flex: 1;
+                justify-content: center;
+            }
+
+            /* empty */
+            .ch-empty {
+                grid-column: 1/-1;
+                border: 1px dashed var(--line);
+                border-radius: var(--r-3);
+                padding: var(--s-7) var(--s-4);
+                text-align: center;
+                color: var(--ink-2);
+            }
+            .ch-empty .h {
+                font-size: 15px;
+                font-weight: 600;
+                color: var(--ink-0);
+                margin-bottom: var(--s-2);
+            }
+            .ch-empty .s {
+                font-size: 13px;
+                color: var(--ink-3);
+                max-width: 420px;
+                margin: 0 auto var(--s-4);
+                line-height: 1.6;
+            }
+            .ch-empty .hint {
+                font-family: var(--mono);
+                font-size: 10.5px;
+                color: var(--ink-4);
+                letter-spacing: 0.1em;
+                text-transform: uppercase;
+            }
+
+            /* ============== RECORDINGS LEDGER ============== */
+
+            .ledger {
+                background: var(--bg-1);
+                border: 1px solid var(--line-soft);
+                border-radius: var(--r-3);
+                overflow: hidden;
+            }
+
+            .ledger table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+
+            .ledger thead th {
+                font-family: var(--mono);
+                font-size: 10.5px;
+                font-weight: 500;
+                text-transform: uppercase;
+                letter-spacing: 0.12em;
+                color: var(--ink-3);
+                text-align: left;
+                padding: var(--s-3) var(--s-4);
+                background: var(--bg);
+                border-bottom: 1px solid var(--line-soft);
+            }
+            .ledger thead th.num {
+                text-align: right;
+            }
+            .ledger thead th.act {
+                text-align: right;
+            }
+
+            .ledger tbody tr {
+                border-top: 1px solid var(--line-soft);
+                transition: background 0.1s var(--ease-out);
+            }
+            .ledger tbody tr:first-child {
+                border-top: none;
+            }
+            .ledger tbody tr:hover {
+                background: var(--bg-2);
+            }
+
+            .ledger tbody td {
+                padding: var(--s-3) var(--s-4);
+                font-size: 13px;
+                color: var(--ink-1);
+                vertical-align: middle;
+            }
+            .ledger tbody td.num {
+                text-align: right;
+                font-family: var(--mono);
+                font-size: 12px;
+                font-variant-numeric: tabular-nums;
+                color: var(--ink-2);
+            }
+            .ledger tbody td.act {
+                text-align: right;
+            }
+
+            .ledger .row-title {
+                display: flex;
+                flex-direction: column;
+                gap: 2px;
+            }
+            .ledger .row-title .n {
+                font-weight: 600;
+                color: var(--ink-0);
+            }
+            .ledger .row-title .p {
+                font-family: var(--mono);
+                font-size: 10.5px;
+                color: var(--ink-3);
+            }
+
+            .status-chip {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                font-family: var(--mono);
+                font-size: 10.5px;
+                text-transform: uppercase;
+                letter-spacing: 0.1em;
+                padding: 3px 8px;
+                border-radius: 4px;
+                border: 1px solid var(--line-soft);
+                background: var(--bg-2);
+                color: var(--ink-2);
+            }
+            .status-chip .dot {
+                width: 6px;
+                height: 6px;
+                border-radius: 50%;
+                background: var(--ink-3);
+            }
+            .status-chip.rec {
+                color: var(--rec);
+                border-color: rgba(var(--Content-Accent-Red-Strong-rgb), 0.4);
+                background: rgba(var(--Content-Accent-Red-Strong-rgb), 0.08);
+            }
+            .status-chip.rec .dot {
+                background: var(--rec);
+                animation: blink 1.6s var(--ease-in-out) infinite;
+            }
+            .status-chip.done {
+                color: var(--ok);
+            }
+
+            .row-act {
+                display: inline-flex;
+                flex-wrap: wrap;
+                gap: 4px;
+                justify-content: flex-end;
+            }
+
+            .btn-convert[aria-busy="true"] {
+                opacity: 0.65;
+                cursor: wait;
+            }
+
+            .ledger-empty {
+                padding: var(--s-6) var(--s-4);
+                text-align: center;
+                color: var(--ink-3);
+                font-size: 13px;
+            }
+
+            .tz {
+                font-family: var(--mono);
+                font-size: 9.5px;
+                color: var(--ink-4);
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
+                margin-left: 4px;
+            }
+
+            /* ============== RIGHT FLOW (event stream) ============== */
+
+            .flow {
+                grid-area: flow;
+                background: linear-gradient(
+                    180deg,
+                    var(--bg) 0%,
+                    var(--bg-1) 100%
+                );
+                border-left: 1px solid var(--line-soft);
+                display: flex;
+                flex-direction: column;
+                min-height: 0;
+            }
+            @media (max-width: 1200px) {
+                .flow {
+                    border-left: none;
+                    border-top: 1px solid var(--line-soft);
+                }
+            }
+
+            .flow-head {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: var(--s-4) var(--s-5);
+                border-bottom: 1px solid var(--line-soft);
+            }
+            .flow-head h2 {
+                margin: 0;
+                font-size: 13px;
+                font-weight: 600;
+                color: var(--ink-0);
+                display: flex;
+                align-items: center;
+                gap: var(--s-2);
+            }
+            .flow-head h2::before {
+                content: "";
+                width: 6px;
+                height: 6px;
+                border-radius: 50%;
+                background: var(--Content-Brand-Strong);
+                box-shadow: 0 0 8px var(--Surface-Brand-Alpha-Base);
+                animation: blink 1.2s var(--ease-in-out) infinite;
+            }
+            .flow-head .stamp {
+                font-family: var(--mono);
+                font-size: 10.5px;
+                color: var(--ink-3);
+                letter-spacing: 0.08em;
+            }
+
+            .stream {
+                flex: 1;
+                overflow-y: auto;
+                padding: var(--s-3) 0;
+                font-family: var(--mono);
+                font-size: 11.5px;
+                line-height: 1.65;
+                scrollbar-width: thin;
+                scrollbar-color: var(--line) transparent;
+            }
+            .stream::-webkit-scrollbar {
+                width: 6px;
+            }
+            .stream::-webkit-scrollbar-thumb {
+                background: var(--line);
+                border-radius: 3px;
+            }
+
+            .ev {
+                display: grid;
+                grid-template-columns: 56px 50px 1fr;
+                gap: var(--s-3);
+                padding: 4px var(--s-5);
+                align-items: baseline;
+                border-left: 2px solid transparent;
+                transition: background 0.15s var(--ease-out);
+            }
+            .ev:hover {
+                background: var(--bg-1);
+            }
+            .ev .t {
+                color: var(--ink-4);
+                font-variant-numeric: tabular-nums;
+            }
+            .ev .lvl {
+                font-size: 10px;
+                letter-spacing: 0.1em;
+                text-transform: uppercase;
+                color: var(--ink-3);
+            }
+            .ev .m {
+                color: var(--ink-1);
+                word-break: break-word;
+            }
+            .ev.info {
+                border-left-color: var(--info);
+            }
+            .ev.info .lvl {
+                color: var(--info);
+            }
+            .ev.ok {
+                border-left-color: var(--ok);
+            }
+            .ev.ok .lvl {
+                color: var(--ok);
+            }
+            .ev.warn {
+                border-left-color: var(--arm);
+            }
+            .ev.warn .lvl {
+                color: var(--arm);
+            }
+            .ev.err {
+                border-left-color: var(--rec);
+            }
+            .ev.err .lvl {
+                color: var(--rec);
+            }
+            .ev.err .m {
+                color: var(--Content-Accent-Red-Weak);
+            }
+
+            .ev.fresh {
+                animation: enter 0.4s var(--ease-out) both;
+            }
+            @keyframes enter {
+                0% {
+                    opacity: 0;
+                    transform: translateX(-6px);
+                    background: var(--Surface-Brand-Alpha-Weaker);
+                }
+                100% {
+                    opacity: 1;
+                    transform: translateX(0);
+                    background: transparent;
+                }
+            }
+
+            .stream-empty {
+                padding: var(--s-5);
+                color: var(--ink-3);
+                font-size: 12px;
+                text-align: center;
+                font-family: var(--mono);
+            }
+
+            .flow-foot {
+                border-top: 1px solid var(--line-soft);
+                padding: var(--s-3) var(--s-5);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                font-family: var(--mono);
+                font-size: 10.5px;
+                color: var(--ink-3);
+                letter-spacing: 0.1em;
+                text-transform: uppercase;
+            }
+            .flow-foot .legend {
+                display: flex;
+                gap: var(--s-3);
+            }
+            .flow-foot .legend .sw {
+                display: inline-block;
+                width: 8px;
+                height: 2px;
+                margin-right: 4px;
+                vertical-align: middle;
+            }
+            .sw.info {
+                background: var(--info);
+            }
+            .sw.ok {
+                background: var(--ok);
+            }
+            .sw.warn {
+                background: var(--arm);
+            }
+            .sw.err {
+                background: var(--rec);
+            }
+
+            /* ============== MODALS ============== */
+
+            .modal-bg {
+                position: fixed;
+                inset: 0;
+                background: rgba(var(--Surface-Neutral-Weakest-rgb), 0.7);
+                backdrop-filter: blur(6px);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 100;
+                animation: fade 0.15s var(--ease-out);
+            }
+            .modal-bg.hidden {
+                display: none;
+            }
+            @keyframes fade {
+                from {
+                    opacity: 0;
+                }
+                to {
+                    opacity: 1;
+                }
+            }
+
+            .modal {
+                background: var(--bg-1);
+                border: 1px solid var(--line);
+                border-radius: var(--r-3);
+                width: 100%;
+                max-width: 460px;
+                padding: var(--s-5);
+                animation: rise 0.22s var(--ease-out);
+            }
+            .modal.wide {
+                max-width: 960px;
+            }
+            @keyframes rise {
+                from {
+                    opacity: 0;
+                    transform: translateY(8px) scale(0.98);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0) scale(1);
+                }
+            }
+
+            .modal-head {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: var(--s-4);
+                gap: var(--s-3);
+            }
+            .modal-head h3 {
+                flex: 0 0 auto;
+            }
+            .modal-head .head-right {
+                display: flex;
+                align-items: center;
+                gap: var(--s-3);
+                flex: 1;
+                justify-content: flex-end;
+            }
+            .modal-head h3 {
+                margin: 0;
+                font-size: 15px;
+                font-weight: 600;
+                color: var(--ink-0);
+            }
+            .modal-head .sub {
+                font-family: var(--mono);
+                font-size: 10.5px;
+                color: var(--ink-3);
+                text-transform: uppercase;
+                letter-spacing: 0.12em;
+            }
+
+            .field {
+                margin-bottom: var(--s-4);
+            }
+            .field label {
+                display: block;
+                font-family: var(--mono);
+                font-size: 10.5px;
+                text-transform: uppercase;
+                letter-spacing: 0.12em;
+                color: var(--ink-3);
+                margin-bottom: 6px;
+            }
+            .field .hint {
+                font-size: 11px;
+                color: var(--ink-3);
+                margin-top: 4px;
+            }
+            .field input[type="text"],
+            .field input[type="number"],
+            .field select {
+                width: 100%;
+                height: 38px;
+                background: var(--bg);
+                border: 1px solid var(--line);
+                border-radius: var(--r-2);
+                padding: 0 var(--s-3);
+                color: var(--ink-0);
+                font: 400 13px var(--sans);
+                outline: none;
+                transition:
+                    border-color 0.12s var(--ease-out),
+                    box-shadow 0.12s var(--ease-out);
+            }
+            .field input:focus,
+            .field select:focus {
+                border-color: var(--Border-Brand-Base);
+                box-shadow: 0 0 0 3px var(--Surface-Brand-Alpha-Weak);
+            }
+            .field .row2 {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: var(--s-3);
+            }
+            .field input[type="file"] {
+                width: 100%;
+                font: 400 12px var(--sans);
+                color: var(--ink-1);
+            }
+            .cookie-status {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: var(--s-3);
+                padding: var(--s-3);
+                background: var(--bg);
+                border: 1px solid var(--line);
+                border-radius: var(--r-2);
+                margin-bottom: var(--s-3);
+            }
+            .cookie-status .info {
+                font-size: 12px;
+                color: var(--ink-1);
+                line-height: 1.45;
+            }
+            .cookie-status .info strong {
+                color: var(--ink-0);
+                font-weight: 600;
+            }
+            .cookie-actions {
+                display: flex;
+                gap: var(--s-2);
+                flex-wrap: wrap;
+            }
+
+            .check {
+                display: flex;
+                align-items: center;
+                gap: var(--s-2);
+                cursor: pointer;
+                user-select: none;
+                font-size: 13px;
+                color: var(--ink-1);
+            }
+            .check input {
+                display: none;
+            }
+            .check .box {
+                width: 18px;
+                height: 18px;
+                border-radius: 4px;
+                border: 1.5px solid var(--line);
+                display: grid;
+                place-items: center;
+                background: var(--bg);
+                transition: all 0.12s var(--ease-out);
+            }
+            .check input:checked + .box {
+                background: var(--Content-Brand-Strong);
+                border-color: var(--Content-Brand-Strong);
+            }
+            .check input:checked + .box::after {
+                content: "✓";
+                color: var(--Content-Neutral-Inverse);
+                font-size: 12px;
+                font-weight: 700;
+            }
+
+            .err-msg {
+                color: var(--rec);
+                font-size: 12px;
+                min-height: 16px;
+                margin-top: var(--s-2);
+                font-family: var(--mono);
+            }
+
+            .modal-foot {
+                display: flex;
+                gap: var(--s-2);
+                margin-top: var(--s-5);
+            }
+            .modal-foot .btn {
+                flex: 1;
+                justify-content: center;
+            }
+
+            /* close button on modal head */
+            .modal-close {
+                width: 28px;
+                height: 28px;
+                border: 1px solid var(--line-soft);
+                background: transparent;
+                color: var(--ink-3);
+                border-radius: var(--r-1);
+                cursor: pointer;
+                display: grid;
+                place-items: center;
+                font-size: 14px;
+                line-height: 1;
+                transition: all 0.12s var(--ease-out);
+            }
+            .modal-close:hover {
+                background: var(--bg-2);
+                color: var(--ink-0);
+                border-color: var(--line);
+            }
+            .modal-close:focus-visible {
+                outline: 2px solid var(--Content-Brand-Strong);
+                outline-offset: 2px;
+            }
+
+            /* loading button state */
+            .btn[aria-busy="true"] {
+                pointer-events: none;
+                opacity: 0.7;
+            }
+            .btn[aria-busy="true"]::after {
+                content: "";
+                display: inline-block;
+                width: 10px;
+                height: 10px;
+                margin-left: var(--s-2);
+                border: 1.5px solid currentColor;
+                border-top-color: transparent;
+                border-radius: 50%;
+                animation: spin 0.7s linear infinite;
+                vertical-align: middle;
+            }
+            @keyframes spin {
+                to {
+                    transform: rotate(360deg);
+                }
+            }
+
+            /* ============== TOASTS ============== */
+
+            .toast-stack {
+                position: fixed;
+                bottom: var(--s-5);
+                right: var(--s-5);
+                z-index: 200;
+                display: flex;
+                flex-direction: column;
+                gap: var(--s-2);
+                pointer-events: none;
+                max-width: 360px;
+            }
+            .toast {
+                background: var(--bg-2);
+                border: 1px solid var(--line);
+                border-radius: var(--r-2);
+                padding: var(--s-3) var(--s-4);
+                display: flex;
+                align-items: flex-start;
+                gap: var(--s-3);
+                color: var(--ink-1);
+                font-size: 12.5px;
+                line-height: 1.45;
+                box-shadow: 0 8px 24px var(--Shadow-Strong);
+                pointer-events: auto;
+                animation: toast-in 0.22s var(--ease-out);
+            }
+            .toast.is-leaving {
+                animation: toast-out 0.18s var(--ease-out) forwards;
+            }
+            .toast .badge {
+                width: 6px;
+                height: 6px;
+                border-radius: 50%;
+                margin-top: 6px;
+                flex: 0 0 6px;
+            }
+            .toast.err .badge {
+                background: var(--rec);
+            }
+            .toast.ok .badge {
+                background: var(--ok);
+            }
+            .toast.info .badge {
+                background: var(--info);
+            }
+            .toast .body {
+                flex: 1;
+            }
+            .toast .body .t {
+                font-weight: 600;
+                color: var(--ink-0);
+                margin-bottom: 2px;
+            }
+            .toast .body .m {
+                color: var(--ink-2);
+                font-family: var(--mono);
+                font-size: 11.5px;
+                word-break: break-word;
+            }
+            @keyframes toast-in {
+                from {
+                    opacity: 0;
+                    transform: translateX(20px) translateY(4px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateX(0) translateY(0);
+                }
+            }
+            @keyframes toast-out {
+                to {
+                    opacity: 0;
+                    transform: translateX(20px);
+                }
+            }
+            @media (max-width: 820px) {
+                .toast-stack {
+                    left: var(--s-3);
+                    right: var(--s-3);
+                    bottom: var(--s-3);
+                    max-width: none;
+                }
+            }
+
+            /* ============== SKELETONS / CONNECTING ============== */
+
+            .connecting {
+                display: flex;
+                align-items: center;
+                gap: var(--s-2);
+                color: var(--ink-3);
+                font-family: var(--mono);
+                font-size: 11.5px;
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
+            }
+            .connecting .dot {
+                width: 6px;
+                height: 6px;
+                border-radius: 50%;
+                background: var(--Content-Brand-Strong);
+                box-shadow: 0 0 8px var(--Surface-Brand-Alpha-Base);
+                animation: blink 1.2s var(--ease-in-out) infinite;
+            }
+
+            /* player */
+            .player-shell {
+                background: black;
+                border-radius: var(--r-2);
+                overflow: hidden;
+            }
+            .player-shell video {
+                width: 100%;
+                display: block;
+                max-height: 70vh;
+                background: black;
+            }
+            .player-meta {
+                margin-top: var(--s-3);
+                font-family: var(--mono);
+                font-size: 11px;
+                color: var(--ink-3);
+                display: flex;
+                justify-content: space-between;
+                gap: var(--s-3);
+            }
+            .player-meta .path {
+                color: var(--arm);
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            .clip-panel {
+                margin-top: var(--s-4);
+                padding: var(--s-4);
+                border: 1px solid var(--line);
+                border-radius: var(--r-2);
+                background: var(--surface-2);
+            }
+            .clip-panel h4 {
+                margin: 0 0 var(--s-3);
+                font-size: 13px;
+                font-weight: 600;
+            }
+            .clip-range {
+                display: grid;
+                gap: var(--s-3);
+            }
+            .clip-range-row {
+                display: grid;
+                grid-template-columns: 56px 1fr 72px;
+                align-items: center;
+                gap: var(--s-2);
+                font-size: 12px;
+            }
+            .clip-range-row input[type="range"] {
+                width: 100%;
+            }
+            .clip-range-row .time {
+                font-family: var(--mono);
+                font-size: 11px;
+                color: var(--ink-2);
+                text-align: right;
+            }
+            .clip-actions {
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                gap: var(--s-2);
+                margin-top: var(--s-3);
+            }
+            .clip-status {
+                font-size: 11px;
+                color: var(--ink-3);
+                font-family: var(--mono);
+            }
+
+            /* ============== STAGGER ============== */
+
+            .stagger > * {
+                animation: rise 0.4s var(--ease-out) both;
+            }
+            .stagger > *:nth-child(1) {
+                animation-delay: 0.02s;
+            }
+            .stagger > *:nth-child(2) {
+                animation-delay: 0.06s;
+            }
+            .stagger > *:nth-child(3) {
+                animation-delay: 0.1s;
+            }
+            .stagger > *:nth-child(4) {
+                animation-delay: 0.14s;
+            }
+            .stagger > *:nth-child(5) {
+                animation-delay: 0.18s;
+            }
+            .stagger > *:nth-child(6) {
+                animation-delay: 0.22s;
+            }
+            .stagger > *:nth-child(7) {
+                animation-delay: 0.26s;
+            }
+            .stagger > *:nth-child(8) {
+                animation-delay: 0.3s;
+            }
+            .stagger > *:nth-child(n + 9) {
+                animation-delay: 0.34s;
+            }
+
+            /* ============== REDUCED MOTION ============== */
+
+            @media (prefers-reduced-motion: reduce) {
+                *,
+                *::before,
+                *::after {
+                    animation-duration: 0.001ms !important;
+                    transition-duration: 0.001ms !important;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="app">
+            <!-- LEFT RAIL -->
+            <aside class="rail">
+                <div class="brand">
+                    <div class="brand-mark"></div>
+                    <div class="brand-text">
+                        <span class="ko">지직</span>
+                        <span class="id">zzk · v0.1</span>
+                    </div>
+                </div>
+
+                <div class="rail-section">
+                    <div class="rail-label">시스템</div>
+                    <div class="rail-stat">
+                        <span class="v" id="stat-channels">0</span>
+                        <span class="l">등록된 채널</span>
+                    </div>
+                    <div class="rail-stat">
+                        <span class="v rec" id="stat-recording">0</span>
+                        <span class="l">녹화 중</span>
+                    </div>
+                    <div class="rail-stat">
+                        <span class="v arm" id="stat-armed">0</span>
+                        <span class="l">자동 대기</span>
+                    </div>
+                </div>
+
+                <div class="rail-section">
+                    <div class="rail-label">저장소</div>
+                    <div class="rail-output">
+                        <span class="path" id="stat-output" title="녹화 폴더"
+                            >~/recordings</span
+                        >
+                        <button onclick="showSettings()">경로 변경 →</button>
+                    </div>
+                    <div class="rail-stat">
+                        <span class="v" id="stat-total">0</span>
+                        <span class="l">총 녹화 수</span>
+                    </div>
+                </div>
+
+                <div class="rail-foot">
+                    <div>
+                        <span class="dot" id="rail-dot"></span
+                        ><span id="server-status">연결됨</span>
+                    </div>
+                    <div style="margin-top: 6px; opacity: 0.7">
+                        로컬 · 127.0.0.1:8000
+                    </div>
+                </div>
+            </aside>
+
+            <!-- TOP BAR -->
+            <header class="topbar">
+                <div class="crumbs">
+                    <span>부스</span>
+                    <span class="sep">/</span>
+                    <b id="crumb-state">대기 중</b>
+                    <span class="sep">·</span>
+                    <span class="live-now" id="crumb-live">0 라이브</span>
+                </div>
+                <div class="actions">
+                    <button class="btn btn-ghost btn-sm" onclick="refreshAll()">
+                        <span class="ic">↻</span>
+                        <span>새로고침</span>
+                    </button>
+                    <button class="btn btn-sm" onclick="showSettings()">
+                        <span class="ic">⚙</span>
+                        <span>설정</span>
+                    </button>
+                    <button
+                        class="btn btn-primary btn-sm"
+                        onclick="showAddModal()"
+                    >
+                        <span class="ic">+</span>
+                        <span>채널 등록</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- MAIN -->
+            <main class="main">
+                <section>
+                    <div class="section-head">
+                        <h2>
+                            채널
+                            <span class="count" id="channels-count"
+                                >0개 등록</span
+                            >
+                        </h2>
+                        <div class="meta">클릭 → 녹화 · ⚙ → 설정</div>
+                    </div>
+                    <div id="channels-grid" class="channels stagger">
+                        <!-- populated by JS -->
+                    </div>
+                </section>
+
+                <section>
+                    <div class="section-head">
+                        <h2>
+                            녹화 기록
+                            <span class="count" id="recordings-count">0건</span>
+                        </h2>
+                        <div class="meta">
+                            .m3u8 재생 · 완료 후 MP4/MKV 변환 (ffmpeg 필요)
+                        </div>
+                    </div>
+                    <div class="ledger">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>채널 / 경로</th>
+                                    <th>시작</th>
+                                    <th>상태</th>
+                                    <th class="num">세그</th>
+                                    <th class="num">길이</th>
+                                    <th class="act">액션</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recordings-tbody">
+                                <!-- rows by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </main>
+
+            <!-- RIGHT FLOW (event stream) -->
+            <aside class="flow">
+                <div class="flow-head">
+                    <h2>이벤트 스트림</h2>
+                    <span class="stamp" id="flow-stamp">--:--:--</span>
+                </div>
+                <div class="stream" id="log-box">
+                    <div class="stream-empty">아직 이벤트 없음</div>
+                </div>
+                <div class="flow-foot">
+                    <div class="legend">
+                        <span><span class="sw info"></span>정보</span>
+                        <span><span class="sw ok"></span>성공</span>
+                        <span><span class="sw warn"></span>경고</span>
+                        <span><span class="sw err"></span>오류</span>
+                    </div>
+                    <button class="btn btn-ghost btn-sm" onclick="clearLogs()">
+                        지우기
+                    </button>
+                </div>
+            </aside>
+        </div>
+
+        <!-- TOAST STACK -->
+        <div
+            class="toast-stack"
+            id="toast-stack"
+            role="region"
+            aria-live="polite"
+            aria-atomic="false"
+            aria-label="알림"
+        ></div>
+
+        <!-- ADD CHANNEL MODAL -->
+        <div
+            id="add-modal"
+            class="modal-bg hidden"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="add-modal-title"
+            onclick="if (event.target.id === 'add-modal') hideAddModal();"
+        >
+            <div class="modal" onclick="event.stopImmediatePropagation()">
+                <div class="modal-head">
+                    <h3 id="add-modal-title">채널 등록</h3>
+                    <div class="head-right">
+                        <span class="sub">새 채널</span>
+                        <button
+                            type="button"
+                            class="modal-close"
+                            onclick="hideAddModal()"
+                            aria-label="닫기"
+                        >
+                            ×
+                        </button>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label>치지직 채널 URL 또는 ID</label>
+                    <input
+                        id="add-url"
+                        type="text"
+                        placeholder="https://chzzk.naver.com/live/... 또는 32자리 ID"
+                        autocomplete="off"
+                    />
+                    <div class="hint">
+                        채널 페이지, live URL, 채널 ID 모두 사용 가능
+                    </div>
+                </div>
+
+                <div class="field">
+                    <div class="row2">
+                        <div>
+                            <label>화질</label>
+                            <select id="add-quality">
+                                <option value="best">최고화질</option>
+                                <option value="1080p">1080p</option>
+                                <option value="720p">720p</option>
+                                <option value="480p">480p</option>
+                                <option value="360p">360p</option>
+                                <option value="audioOnly">오디오만</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>분할 (분)</label>
+                            <input
+                                id="add-segment"
+                                type="number"
+                                value="0"
+                                min="0"
+                                step="5"
+                            />
+                        </div>
+                    </div>
+                    <div class="hint">0 = 분할 없음 (단일 파일)</div>
+                </div>
+
+                <div class="field">
+                    <label class="check">
+                        <input type="checkbox" id="add-auto" checked />
+                        <span class="box"></span>
+                        <span>방송 시작 시 자동 녹화</span>
+                    </label>
+                </div>
+
+                <div class="err-msg" id="add-error"></div>
+
+                <div class="modal-foot">
+                    <button class="btn" onclick="hideAddModal()">취소</button>
+                    <button class="btn btn-primary" onclick="addChannel()">
+                        등록
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- EDIT CHANNEL MODAL -->
+        <div
+            id="edit-modal"
+            class="modal-bg hidden"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="edit-modal-title"
+            onclick="if (event.target.id === 'edit-modal') hideEditModal();"
+        >
+            <div class="modal" onclick="event.stopImmediatePropagation()">
+                <div class="modal-head">
+                    <h3 id="edit-modal-title">채널 설정</h3>
+                    <div class="head-right">
+                        <span class="sub" id="edit-modal-sub">—</span>
+                        <button
+                            type="button"
+                            class="modal-close"
+                            onclick="hideEditModal()"
+                            aria-label="닫기"
+                        >
+                            ×
+                        </button>
+                    </div>
+                </div>
+
+                <input type="hidden" id="edit-id" />
+
+                <div class="field">
+                    <label>화질</label>
+                    <select id="edit-quality">
+                        <option value="best">최고화질</option>
+                        <option value="1080p">1080p</option>
+                        <option value="720p">720p</option>
+                        <option value="480p">480p</option>
+                        <option value="360p">360p</option>
+                        <option value="audioOnly">오디오만</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label>분할 (분)</label>
+                    <input id="edit-segment" type="number" min="0" step="5" />
+                    <div class="hint">0 = 분할 없음 (단일 파일)</div>
+                </div>
+
+                <div class="field">
+                    <label class="check">
+                        <input type="checkbox" id="edit-auto" />
+                        <span class="box"></span>
+                        <span>방송 시작 시 자동 녹화</span>
+                    </label>
+                </div>
+
+                <div class="err-msg" id="edit-error"></div>
+
+                <div class="modal-foot">
+                    <button class="btn" onclick="hideEditModal()">취소</button>
+                    <button
+                        class="btn btn-primary"
+                        id="edit-save-btn"
+                        onclick="saveEditChannel()"
+                    >
+                        저장
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- SETTINGS MODAL -->
+        <div
+            id="settings-modal"
+            class="modal-bg hidden"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="settings-modal-title"
+            onclick="
+                if (event.target.id === 'settings-modal') hideSettingsModal();
+            "
+        >
+            <div class="modal" onclick="event.stopImmediatePropagation()">
+                <div class="modal-head">
+                    <h3 id="settings-modal-title">설정</h3>
+                    <div class="head-right">
+                        <span class="sub">설정</span>
+                        <button
+                            type="button"
+                            class="modal-close"
+                            onclick="hideSettingsModal()"
+                            aria-label="닫기"
+                        >
+                            ×
+                        </button>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label>녹화 저장 폴더</label>
+                    <input
+                        id="settings-output"
+                        type="text"
+                        placeholder="recordings"
+                        autocomplete="off"
+                    />
+                    <div class="hint">
+                        상대 경로 또는 절대 경로. 비우면 기본값 사용.
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label>ffmpeg 경로 (선택)</label>
+                    <input
+                        id="settings-ffmpeg"
+                        type="text"
+                        placeholder="ffmpeg (PATH에 있으면 비워두세요)"
+                        autocomplete="off"
+                    />
+                    <div class="hint">
+                        MP4/MKV 변환에 필요. PATH에 없으면 실행 파일 전체 경로를
+                        입력하세요.
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="check">
+                        <input type="checkbox" id="settings-auto-convert" />
+                        <span class="box"></span>
+                        <span>녹화 완료 시 자동으로 단일 파일로 변환</span>
+                    </label>
+                </div>
+
+                <div class="field">
+                    <div class="row2">
+                        <div>
+                            <label>자동 변환 형식</label>
+                            <select id="settings-auto-format">
+                                <option value="mp4">MP4</option>
+                                <option value="mkv">MKV</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="check" style="margin-top: 22px">
+                                <input
+                                    type="checkbox"
+                                    id="settings-delete-segments"
+                                />
+                                <span class="box"></span>
+                                <span>변환 후 HLS 세그먼트 삭제</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="hint">
+                        세그먼트 삭제 시 .m3u8와 chunk/ 폴더가 제거되고 변환된
+                        파일만 남습니다.
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label>로그인 쿠키 (선택)</label>
+                    <div class="cookie-status" id="cookie-status">
+                        <div class="info" id="cookie-status-text">
+                            불러오는 중…
+                        </div>
+                    </div>
+                    <input
+                        id="settings-cookie-file"
+                        type="file"
+                        accept=".txt,.json,text/plain,application/json"
+                    />
+                    <div class="hint">
+                        성인/구독자 전용 방송 녹화에 필요합니다. 브라우저
+                        확장으로 추출한 Netscape cookies.txt 또는 JSON 형식을
+                        업로드하세요.
+                    </div>
+                    <div class="cookie-actions" style="margin-top: var(--s-3)">
+                        <button
+                            type="button"
+                            class="btn btn-sm"
+                            id="cookie-upload-btn"
+                            onclick="uploadCookies()"
+                        >
+                            쿠키 업로드
+                        </button>
+                        <button
+                            type="button"
+                            class="btn btn-sm btn-danger"
+                            id="cookie-delete-btn"
+                            onclick="deleteCookies()"
+                            hidden
+                        >
+                            쿠키 삭제
+                        </button>
+                    </div>
+                </div>
+
+                <div class="err-msg" id="settings-error"></div>
+
+                <div class="modal-foot">
+                    <button class="btn" onclick="hideSettingsModal()">
+                        취소
+                    </button>
+                    <button
+                        class="btn btn-primary"
+                        id="settings-save-btn"
+                        onclick="saveSettings()"
+                    >
+                        저장
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- HLS PLAYER MODAL -->
+        <div
+            id="player-modal"
+            class="modal-bg hidden"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="player-title"
+            onclick="if (event.target.id === 'player-modal') closePlayer();"
+        >
+            <div class="modal wide" onclick="event.stopImmediatePropagation()">
+                <div class="modal-head">
+                    <h3 id="player-title">—</h3>
+                    <div class="head-right">
+                        <span class="sub" id="player-sub">—</span>
+                        <button
+                            type="button"
+                            class="modal-close"
+                            onclick="closePlayer()"
+                            aria-label="닫기"
+                        >
+                            ×
+                        </button>
+                    </div>
+                </div>
+                <div class="player-shell">
+                    <video id="player-video" controls></video>
+                </div>
+                <div class="player-meta">
+                    <span class="path" id="player-path">—</span>
+                    <span id="player-duration">HLS.js · 브라우저 재생</span>
+                </div>
+                <div class="clip-panel" id="clip-panel">
+                    <h4>구간 클립 만들기</h4>
+                    <div class="clip-range">
+                        <div class="clip-range-row">
+                            <label for="clip-start">시작</label>
+                            <input
+                                type="range"
+                                id="clip-start"
+                                min="0"
+                                max="0"
+                                step="0.1"
+                                value="0"
+                            />
+                            <span class="time" id="clip-start-label">0:00</span>
+                        </div>
+                        <div class="clip-range-row">
+                            <label for="clip-end">종료</label>
+                            <input
+                                type="range"
+                                id="clip-end"
+                                min="0"
+                                max="0"
+                                step="0.1"
+                                value="0"
+                            />
+                            <span class="time" id="clip-end-label">0:00</span>
+                        </div>
+                    </div>
+                    <div class="clip-actions">
+                        <select id="clip-format" class="btn-sm">
+                            <option value="mp4">MP4</option>
+                            <option value="mkv">MKV</option>
+                        </select>
+                        <button
+                            type="button"
+                            class="btn btn-sm btn-primary"
+                            id="clip-create-btn"
+                            onclick="createClip()"
+                        >
+                            클립 만들기
+                        </button>
+                        <a
+                            class="btn btn-sm hidden"
+                            id="clip-download"
+                            href="#"
+                            download
+                            >다운로드</a
+                        >
+                        <span class="clip-status" id="clip-status"></span>
+                    </div>
+                </div>
+                <div class="modal-foot">
+                    <button class="btn" onclick="closePlayer()">닫기</button>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+        <script>
+            /* ============================================================
+               zzk client
+               ============================================================ */
+
+            let channelsData = [];
+            let recordingsData = [];
+            let lastLogSig = "";
+            let lastEventCount = 0;
+            let bootDone = false;
+            const convertPollers = new Map();
+            let currentPlayerRecId = null;
+            let clipPollTimer = null;
+
+            /* -------- helpers -------- */
+
+            async function api(path, opts = {}) {
+                const res = await fetch(path, {
+                    headers: { "Content-Type": "application/json" },
+                    ...opts,
+                });
+                if (!res.ok) {
+                    const t = await res.text();
+                    throw new Error(t || res.statusText);
+                }
+                return res.json();
+            }
+
+            function escapeHtml(s) {
+                return String(s ?? "").replace(
+                    /[&<>"']/g,
+                    (c) =>
+                        ({
+                            "&": "&amp;",
+                            "<": "&lt;",
+                            ">": "&gt;",
+                            '"': "&quot;",
+                            "'": "&#39;",
+                        })[c],
+                );
+            }
+
+            function fmtQuality(q) {
+                const map = {
+                    best: "최고화질",
+                    audioOnly: "오디오만",
+                };
+                return map[q] || q || "최고화질";
+            }
+
+            function fmtStatus(s) {
+                const map = {
+                    recording: "녹화 중",
+                    completed: "완료",
+                    error: "오류",
+                    stopped: "중지됨",
+                    failed: "실패",
+                    idle: "대기",
+                    pending: "대기 중",
+                    running: "진행 중",
+                };
+                return map[s] || s || "";
+            }
+
+            function fmtLevel(l) {
+                const map = {
+                    info: "정보",
+                    ok: "성공",
+                    success: "성공",
+                    warn: "경고",
+                    warning: "경고",
+                    err: "오류",
+                    error: "오류",
+                    done: "완료",
+                };
+                return map[(l || "info").toLowerCase()] || l || "정보";
+            }
+
+            function fmtDur(secs) {
+                if (secs == null || isNaN(secs)) return "—";
+                if (secs < 60) return `${Math.round(secs)}초`;
+                const m = Math.floor(secs / 60);
+                const s = Math.round(secs % 60);
+                return `${m}분 ${String(s).padStart(2, "0")}초`;
+            }
+
+            /* KST: server stores UTC-naive; display in KST with explicit suffix */
+            function fmtKst(iso) {
+                if (!iso) return `<span class="tz">—</span>`;
+                const d = new Date(iso);
+                if (isNaN(d.getTime())) {
+                    return `${escapeHtml(String(iso).replace("T", " ").slice(0, 16))} <span class="tz">—</span>`;
+                }
+                // interpret server value as UTC (it is `datetime.utcnow()`),
+                // present in Asia/Seoul (UTC+9, no DST).
+                const kst = new Date(d.getTime() + 9 * 3600 * 1000);
+                const pad = (n) => String(n).padStart(2, "0");
+                const stamp = `${kst.getUTCFullYear()}-${pad(kst.getUTCMonth() + 1)}-${pad(kst.getUTCDate())} ${pad(kst.getUTCHours())}:${pad(kst.getUTCMinutes())}`;
+                return `${stamp}<span class="tz">KST</span>`;
+            }
+
+            /* -------- toast system -------- */
+
+            function toast(message, opts = {}) {
+                const level = opts.level || "info";
+                const title = opts.title || "";
+                const stack = document.getElementById("toast-stack");
+                if (!stack) return;
+                const el = document.createElement("div");
+                el.className = `toast ${level}`;
+                el.innerHTML = `
+                    <span class="badge" aria-hidden="true"></span>
+                    <div class="body">
+                        ${title ? `<div class="t">${escapeHtml(title)}</div>` : ""}
+                        <div class="m">${escapeHtml(message)}</div>
+                    </div>
+                `;
+                stack.appendChild(el);
+                const ttl = opts.ttl ?? 4500;
+                setTimeout(() => {
+                    el.classList.add("is-leaving");
+                    setTimeout(() => el.remove(), 200);
+                }, ttl);
+            }
+
+            /* -------- modal helpers -------- */
+
+            function showModal(id) {
+                const m = document.getElementById(id);
+                m.classList.remove("hidden");
+                m.dataset.open = "1";
+                // focus first focusable
+                setTimeout(() => {
+                    const f = m.querySelector(
+                        "input, select, textarea, button",
+                    );
+                    if (f) f.focus();
+                }, 60);
+            }
+            function hideModal(id) {
+                const m = document.getElementById(id);
+                if (!m) return;
+                m.classList.add("hidden");
+                delete m.dataset.open;
+            }
+            function isAnyModalOpen() {
+                return [
+                    "add-modal",
+                    "edit-modal",
+                    "settings-modal",
+                    "player-modal",
+                ].some((id) => document.getElementById(id).dataset.open);
+            }
+            function topOpenModal() {
+                const ids = [
+                    "player-modal",
+                    "settings-modal",
+                    "edit-modal",
+                    "add-modal",
+                ];
+                for (const id of ids) {
+                    if (document.getElementById(id).dataset.open) return id;
+                }
+                return null;
+            }
+
+            document.addEventListener("keydown", (e) => {
+                if (e.key === "Escape") {
+                    const top = topOpenModal();
+                    if (top) {
+                        if (top === "add-modal") hideAddModal();
+                        else if (top === "edit-modal") hideEditModal();
+                        else if (top === "settings-modal") hideSettingsModal();
+                        else if (top === "player-modal") closePlayer();
+                    }
+                }
+            });
+
+            /* -------- data fetch + render -------- */
+
+            async function refreshAll() {
+                try {
+                    const [chans, recs, status, sets] = await Promise.all([
+                        api("/api/channels"),
+                        api("/api/recordings"),
+                        api("/api/status"),
+                        api("/api/settings"),
+                    ]);
+
+                    channelsData = chans.channels || [];
+                    recordingsData = recs.recordings || [];
+
+                    renderChannels();
+                    renderRecordings();
+                    renderStats(status, sets);
+                    renderCrumb();
+
+                    if (!bootDone) {
+                        bootDone = true;
+                        document.body.dataset.ready = "1";
+                    }
+                } catch (e) {
+                    console.error(e);
+                    toast(`서버에 연결할 수 없습니다 — ${e.message}`, {
+                        level: "err",
+                        title: "연결 실패",
+                    });
+                }
+            }
+
+            function renderCrumb() {
+                const recCount = channelsData.filter(
+                    (c) => c.is_recording,
+                ).length;
+                const armed = channelsData.filter(
+                    (c) => c.auto_record && !c.is_recording,
+                ).length;
+                const live = channelsData.filter((c) => c.is_live).length;
+
+                const dot = document.getElementById("rail-dot");
+                const s = document.getElementById("server-status");
+                s.textContent = `${recCount}개 활성 · ${armed}개 대기`;
+                dot.style.background =
+                    recCount > 0 ? "var(--rec)" : "var(--ok)";
+
+                document.getElementById("crumb-state").textContent =
+                    recCount > 0 ? `${recCount}개 녹화 진행 중` : "대기 중";
+                document.getElementById("crumb-live").textContent =
+                    `${live} 라이브`;
+            }
+
+            function renderStats(status, sets) {
+                document.getElementById("stat-channels").textContent =
+                    channelsData.length;
+                const recCount = channelsData.filter(
+                    (c) => c.is_recording,
+                ).length;
+                document.getElementById("stat-recording").textContent =
+                    recCount;
+                const armed = channelsData.filter(
+                    (c) => c.auto_record && !c.is_recording,
+                ).length;
+                document.getElementById("stat-armed").textContent = armed;
+                document.getElementById("stat-total").textContent =
+                    recordingsData.length;
+                const out = sets.output_dir || "recordings";
+                const outEl = document.getElementById("stat-output");
+                outEl.textContent =
+                    out.startsWith("/") || /^[a-z]:/i.test(out)
+                        ? out
+                        : `~/${out}`;
+                outEl.title = out;
+            }
+
+            function renderChannels() {
+                const grid = document.getElementById("channels-grid");
+                grid.innerHTML = "";
+
+                document.getElementById("channels-count").textContent =
+                    `${channelsData.length}개 등록`;
+
+                if (channelsData.length === 0) {
+                    grid.innerHTML = `
+                        <div class="ch-empty">
+                            <div class="h">채널이 등록되지 않았습니다</div>
+                            <div class="s">
+                                채널을 한 개 이상 등록하면, 방송이 시작될 때
+                                zzk이 자동으로 감지하여 녹화를 시작합니다.
+                            </div>
+                            <div class="hint">등록된 소스 없음 · 입력 대기</div>
+                        </div>`;
+                    return;
+                }
+
+                channelsData.forEach((ch) => {
+                    const isRec = !!ch.is_recording;
+                    const isLive = !!ch.is_live;
+                    const rec = ch.recording || {};
+                    const safeName = escapeHtml(ch.channel_name || "");
+                    const safeId = escapeHtml(ch.channel_id || "");
+
+                    const el = document.createElement("div");
+                    el.className = `ch-card ${isRec ? "is-rec" : ""}`;
+
+                    const pill = isRec
+                        ? `<span class="ch-pill is-rec"><span class="dot"></span>녹화</span>`
+                        : isLive
+                          ? `<span class="ch-pill is-live"><span class="dot"></span>라이브</span>`
+                          : `<span class="ch-pill"><span class="dot"></span>대기</span>`;
+
+                    const seg =
+                        ch.segment_minutes > 0
+                            ? `<span class="ch-tag">${ch.segment_minutes}분 분할</span>`
+                            : `<span class="ch-tag">단일 파일</span>`;
+                    const arm = ch.auto_record
+                        ? `<span class="ch-tag arm">자동</span>`
+                        : `<span class="ch-tag">수동</span>`;
+
+                    const meter = isRec
+                        ? `<div class="ch-meter">
+                                <span class="lbl">스트림</span>
+                                <div class="bar"><div class="fill"></div></div>
+                                <span class="val">${rec.segment_count || 0}세그</span>
+                                <span class="val">${fmtDur(rec.total_duration || 0)}</span>
+                           </div>`
+                        : `<div class="ch-meter">
+                                <span class="lbl">감시</span>
+                                <div class="bar"></div>
+                                <span class="val">${escapeHtml(fmtQuality(ch.quality))}</span>
+                           </div>`;
+
+                    const avatar = ch.channel_image_url
+                        ? `<img src="${escapeHtml(ch.channel_image_url)}" alt="" loading="lazy" onerror="this.replaceWith(document.createTextNode('${escapeHtml((ch.channel_name || "?").charAt(0))}'))">`
+                        : `<span>${escapeHtml((ch.channel_name || "?").charAt(0))}</span>`;
+
+                    /* action order:
+                       primary (right) -> settings -> delete (rightmost) */
+                    el.innerHTML = `
+                        <div class="ch-head">
+                            <div class="ch-avatar">${avatar}</div>
+                            <div class="ch-name">
+                                <div class="n">${safeName}</div>
+                                <div class="id">${safeId}</div>
+                            </div>
+                            ${pill}
+                        </div>
+                        <div class="ch-tags">
+                            ${seg}
+                            <span class="ch-tag">${escapeHtml(fmtQuality(ch.quality))}</span>
+                            ${arm}
+                        </div>
+                        ${meter}
+                        <div class="ch-actions">
+                            <button type="button" class="btn btn-sm" data-act="edit"
+                                data-id="${safeId}"
+                                data-name="${safeName}"
+                                data-auto="${ch.auto_record ? "1" : "0"}"
+                                data-quality="${escapeHtml(ch.quality || "best")}"
+                                data-seg="${ch.segment_minutes || 0}"
+                                aria-label="채널 설정">설정</button>
+                            <button type="button" class="btn btn-sm btn-danger" data-act="delete"
+                                data-id="${safeId}" data-name="${safeName}"
+                                aria-label="채널 삭제">삭제</button>
+                            ${
+                                isRec
+                                    ? `<button type="button" class="btn btn-sm btn-rec" data-act="stop"
+                                    data-id="${safeId}" aria-label="녹화 중지">● 중지</button>`
+                                    : `<button type="button" class="btn btn-sm btn-primary" data-act="force"
+                                    data-id="${safeId}" aria-label="지금 녹화">▶ 녹화</button>`
+                            }
+                        </div>
+                    `;
+                    grid.appendChild(el);
+                });
+            }
+
+            /* delegated click handler for channel actions */
+            document.addEventListener("click", (e) => {
+                const btn = e.target.closest("[data-act]");
+                if (!btn) return;
+                const id = btn.dataset.id;
+                const act = btn.dataset.act;
+                if (act === "edit") {
+                    openEditModal({
+                        id,
+                        name: btn.dataset.name,
+                        auto: btn.dataset.auto === "1",
+                        quality: btn.dataset.quality,
+                        seg: parseInt(btn.dataset.seg || "0", 10),
+                    });
+                } else if (act === "delete") {
+                    confirmDeleteChannel(id, btn.dataset.name);
+                } else if (act === "stop") {
+                    stopRecording(id);
+                } else if (act === "force") {
+                    forceRecord(id);
+                }
+            });
+
+            function renderRecordings() {
+                const tbody = document.getElementById("recordings-tbody");
+                tbody.innerHTML = "";
+
+                document.getElementById("recordings-count").textContent =
+                    `${recordingsData.length}건`;
+
+                if (recordingsData.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="6" class="ledger-empty">아직 녹화 기록이 없습니다.</td></tr>`;
+                    return;
+                }
+
+                recordingsData.forEach((r) => {
+                    const tr = document.createElement("tr");
+
+                    const isRec = r.status === "recording";
+                    const isDone = r.status === "completed";
+                    const chip = isRec
+                        ? `<span class="status-chip rec"><span class="dot"></span>녹화</span>`
+                        : isDone
+                          ? `<span class="status-chip done"><span class="dot"></span>완료</span>`
+                          : `<span class="status-chip"><span class="dot"></span>${escapeHtml(fmtStatus(r.status))}</span>`;
+
+                    const playBtn = r.playlist_url
+                        ? `<button type="button" class="btn btn-sm" onclick="playRecording('${escapeHtml(r.playlist_url)}', '${escapeHtml(r.channel_name || "")}', '${escapeHtml(String(r.id))}')">▶ 재생</button>`
+                        : "";
+                    const m3u8 = r.playlist_url
+                        ? `<a class="btn btn-sm" href="${escapeHtml(r.playlist_url)}" target="_blank" rel="noopener">m3u8</a>`
+                        : "";
+                    const stopBtn = isRec
+                        ? `<button type="button" class="btn btn-sm btn-rec" onclick="stopRecording('${escapeHtml(r.channel_id)}')">중지</button>`
+                        : "";
+                    const convertBtns = renderConvertButtons(r);
+
+                    const safeName = escapeHtml(r.channel_name || "—");
+                    const safePath = escapeHtml(r.base_path || "");
+
+                    tr.innerHTML = `
+                        <td>
+                            <div class="row-title">
+                                <span class="n">${safeName}</span>
+                                <span class="p" title="${safePath}">${safePath || "<span class='tz'>경로 없음</span>"}</span>
+                            </div>
+                        </td>
+                        <td>${fmtKst(r.started_at)}</td>
+                        <td>${chip}</td>
+                        <td class="num">${r.segment_count ?? 0}</td>
+                        <td class="num">${fmtDur(r.total_duration || 0)}</td>
+                        <td class="act">
+                            <div class="row-act">${playBtn}${m3u8}${convertBtns}${stopBtn}</div>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+
+            /* -------- add channel modal -------- */
+
+            async function addChannel() {
+                const url = document.getElementById("add-url").value.trim();
+                const quality = document.getElementById("add-quality").value;
+                const seg = parseInt(
+                    document.getElementById("add-segment").value || "0",
+                    10,
+                );
+                const auto = document.getElementById("add-auto").checked;
+                const err = document.getElementById("add-error");
+                const btn = document.querySelector("#add-modal .btn-primary");
+
+                err.textContent = "";
+                if (!url) {
+                    err.textContent = "URL 또는 채널 ID를 입력하세요.";
+                    return;
+                }
+                if (Number.isNaN(seg) || seg < 0) {
+                    err.textContent = "분할 값은 0 이상의 숫자여야 합니다.";
+                    return;
+                }
+
+                btn.setAttribute("aria-busy", "true");
+                try {
+                    await api("/api/channels", {
+                        method: "POST",
+                        body: JSON.stringify({
+                            url_or_id: url,
+                            quality,
+                            segment_minutes: seg,
+                            auto_record: auto,
+                        }),
+                    });
+                    hideAddModal();
+                    document.getElementById("add-url").value = "";
+                    document.getElementById("add-segment").value = "0";
+                    document.getElementById("add-auto").checked = true;
+                    await refreshAll();
+                    toast(
+                        `${url.length > 32 ? url.slice(0, 32) + "…" : url} 등록됨`,
+                        {
+                            level: "ok",
+                            title: "채널 등록",
+                        },
+                    );
+                } catch (e) {
+                    err.textContent = e.message || "등록 실패";
+                } finally {
+                    btn.removeAttribute("aria-busy");
+                }
+            }
+            function showAddModal() {
+                document.getElementById("add-error").textContent = "";
+                showModal("add-modal");
+            }
+            function hideAddModal() {
+                hideModal("add-modal");
+            }
+
+            /* -------- edit channel modal -------- */
+
+            function openEditModal({ id, name, auto, quality, seg }) {
+                document.getElementById("edit-id").value = id;
+                document.getElementById("edit-quality").value = quality;
+                document.getElementById("edit-segment").value = seg;
+                document.getElementById("edit-auto").checked = !!auto;
+                document.getElementById("edit-modal-sub").textContent = name
+                    ? `· ${name}`
+                    : "—";
+                document.getElementById("edit-error").textContent = "";
+                showModal("edit-modal");
+            }
+            function hideEditModal() {
+                hideModal("edit-modal");
+            }
+            async function saveEditChannel() {
+                const id = document.getElementById("edit-id").value;
+                const quality = document.getElementById("edit-quality").value;
+                const seg = parseInt(
+                    document.getElementById("edit-segment").value || "0",
+                    10,
+                );
+                const auto = document.getElementById("edit-auto").checked;
+                const err = document.getElementById("edit-error");
+                const btn = document.getElementById("edit-save-btn");
+
+                err.textContent = "";
+                if (Number.isNaN(seg) || seg < 0) {
+                    err.textContent = "분할 값은 0 이상의 숫자여야 합니다.";
+                    return;
+                }
+
+                btn.setAttribute("aria-busy", "true");
+                try {
+                    await api(`/api/channels/${encodeURIComponent(id)}`, {
+                        method: "PATCH",
+                        body: JSON.stringify({
+                            auto_record: auto,
+                            quality,
+                            segment_minutes: seg,
+                        }),
+                    });
+                    hideEditModal();
+                    await refreshAll();
+                    toast("채널 설정 저장됨", {
+                        level: "ok",
+                        title: "설정 변경",
+                    });
+                } catch (e) {
+                    err.textContent = e.message || "저장 실패";
+                } finally {
+                    btn.removeAttribute("aria-busy");
+                }
+            }
+
+            function renderConvertButtons(r) {
+                if (r.status === "recording" || !r.playlist_url) return "";
+                const outputs = r.outputs || {};
+                const parts = [];
+                for (const fmt of ["mp4", "mkv"]) {
+                    const o = outputs[fmt] || {};
+                    const label = fmt.toUpperCase();
+                    if (o.url) {
+                        parts.push(
+                            `<a class="btn btn-sm" href="${escapeHtml(o.url)}" download title="${label} 다운로드">↓${label}</a>`,
+                        );
+                    } else if (
+                        o.conversion &&
+                        (o.conversion.status === "pending" ||
+                            o.conversion.status === "running")
+                    ) {
+                        parts.push(
+                            `<button type="button" class="btn btn-sm btn-convert" disabled aria-busy="true">${label}…</button>`,
+                        );
+                        startConvertPoll(r.id, fmt);
+                    } else {
+                        parts.push(
+                            `<button type="button" class="btn btn-sm btn-convert" onclick="convertRecording(${Number(r.id)}, '${fmt}')" title="${label}로 변환">→${label}</button>`,
+                        );
+                    }
+                }
+                return parts.join("");
+            }
+
+            function startConvertPoll(recId, fmt) {
+                const key = `${recId}:${fmt}`;
+                if (convertPollers.has(key)) return;
+                const timer = setInterval(async () => {
+                    try {
+                        const st = await api(
+                            `/api/recordings/${recId}/convert?format=${encodeURIComponent(fmt)}`,
+                        );
+                        if (
+                            st.status === "completed" ||
+                            st.status === "failed" ||
+                            st.status === "idle"
+                        ) {
+                            clearInterval(timer);
+                            convertPollers.delete(key);
+                            await refreshAll();
+                            if (st.status === "completed") {
+                                toast(`${fmt.toUpperCase()} 변환 완료`, {
+                                    level: "ok",
+                                    title: "변환",
+                                });
+                            } else if (st.status === "failed") {
+                                toast(st.error || "변환 실패", {
+                                    level: "err",
+                                    title: "변환",
+                                });
+                            }
+                        }
+                    } catch (_) {
+                        /* keep polling */
+                    }
+                }, 2000);
+                convertPollers.set(key, timer);
+            }
+
+            async function convertRecording(recId, fmt, overwrite = false) {
+                try {
+                    const res = await api(`/api/recordings/${recId}/convert`, {
+                        method: "POST",
+                        body: JSON.stringify({ format: fmt, overwrite }),
+                    });
+                    if (res.status === "completed") {
+                        toast(`${fmt.toUpperCase()} 변환 완료`, {
+                            level: "ok",
+                            title: "변환",
+                        });
+                        await refreshAll();
+                        return;
+                    }
+                    if (res.status === "failed") {
+                        toast(res.error || "변환 실패", {
+                            level: "err",
+                            title: "변환",
+                        });
+                        await refreshAll();
+                        return;
+                    }
+                    startConvertPoll(recId, fmt);
+                    await refreshAll();
+                    toast(`${fmt.toUpperCase()} 변환 중…`, {
+                        level: "info",
+                        title: "변환",
+                    });
+                } catch (e) {
+                    toast(e.message || "변환 요청 실패", {
+                        level: "err",
+                        title: "변환",
+                    });
+                }
+            }
+
+            /* -------- settings modal -------- */
+
+            function renderCookieStatus(cookies) {
+                const textEl = document.getElementById("cookie-status-text");
+                const deleteBtn = document.getElementById("cookie-delete-btn");
+                const fileInput = document.getElementById(
+                    "settings-cookie-file",
+                );
+                if (!textEl) return;
+
+                if (cookies?.configured) {
+                    const parts = [
+                        `<strong>${cookies.count}개</strong> 쿠키 적용 중`,
+                    ];
+                    if (cookies.filename) {
+                        parts.push(`(${escapeHtml(cookies.filename)})`);
+                    }
+                    if (cookies.has_nid) {
+                        parts.push("· 네이버 로그인 감지");
+                    }
+                    if (cookies.uploaded_at) {
+                        parts.push(
+                            `· ${escapeHtml(cookies.uploaded_at.replace("T", " "))}`,
+                        );
+                    }
+                    textEl.innerHTML = parts.join(" ");
+                    if (deleteBtn) deleteBtn.hidden = false;
+                } else {
+                    textEl.textContent = "쿠키 없음 — 공개 방송만 녹화 가능";
+                    if (deleteBtn) deleteBtn.hidden = true;
+                }
+                if (fileInput) fileInput.value = "";
+            }
+
+            async function showSettings() {
+                try {
+                    const sets = await api("/api/settings");
+                    document.getElementById("settings-output").value =
+                        sets.output_dir || "recordings";
+                    document.getElementById("settings-ffmpeg").value =
+                        sets.ffmpeg_path || "";
+                    document.getElementById("settings-auto-convert").checked =
+                        !!sets.auto_convert;
+                    document.getElementById("settings-auto-format").value =
+                        sets.auto_convert_format || "mp4";
+                    document.getElementById(
+                        "settings-delete-segments",
+                    ).checked = !!sets.auto_convert_delete_segments;
+                    renderCookieStatus(sets.cookies);
+                    document.getElementById("settings-error").textContent = "";
+                    showModal("settings-modal");
+                } catch (e) {
+                    toast(`설정을 불러올 수 없습니다 — ${e.message}`, {
+                        level: "err",
+                        title: "설정",
+                    });
+                }
+            }
+            function hideSettingsModal() {
+                hideModal("settings-modal");
+            }
+            async function saveSettings() {
+                const dir = document
+                    .getElementById("settings-output")
+                    .value.trim();
+                const ffmpeg = document
+                    .getElementById("settings-ffmpeg")
+                    .value.trim();
+                const autoConvert = document.getElementById(
+                    "settings-auto-convert",
+                ).checked;
+                const autoFormat = document.getElementById(
+                    "settings-auto-format",
+                ).value;
+                const deleteSegments = document.getElementById(
+                    "settings-delete-segments",
+                ).checked;
+                const err = document.getElementById("settings-error");
+                const btn = document.getElementById("settings-save-btn");
+
+                err.textContent = "";
+                btn.setAttribute("aria-busy", "true");
+                try {
+                    await api("/api/settings", {
+                        method: "POST",
+                        body: JSON.stringify({
+                            output_dir: dir || null,
+                            ffmpeg_path: ffmpeg,
+                            auto_convert: autoConvert,
+                            auto_convert_format: autoFormat,
+                            auto_convert_delete_segments: deleteSegments,
+                        }),
+                    });
+                    hideSettingsModal();
+                    await refreshAll();
+                    toast(`저장 위치: ${dir || "recordings"}`, {
+                        level: "ok",
+                        title: "설정 저장",
+                    });
+                } catch (e) {
+                    err.textContent = e.message || "저장 실패";
+                } finally {
+                    btn.removeAttribute("aria-busy");
+                }
+            }
+
+            async function uploadCookies() {
+                const fileInput = document.getElementById(
+                    "settings-cookie-file",
+                );
+                const btn = document.getElementById("cookie-upload-btn");
+                const err = document.getElementById("settings-error");
+                const file = fileInput?.files?.[0];
+                if (!file) {
+                    err.textContent = "업로드할 쿠키 파일을 선택하세요.";
+                    return;
+                }
+
+                err.textContent = "";
+                btn.setAttribute("aria-busy", "true");
+                try {
+                    const form = new FormData();
+                    form.append("file", file);
+                    const res = await fetch("/api/settings/cookies", {
+                        method: "POST",
+                        body: form,
+                    });
+                    if (!res.ok) {
+                        const t = await res.text();
+                        throw new Error(t || res.statusText);
+                    }
+                    const data = await res.json();
+                    renderCookieStatus({
+                        configured: true,
+                        count: data.count,
+                        filename: data.filename,
+                        uploaded_at: data.uploaded_at,
+                        has_nid: true,
+                    });
+                    toast(`쿠키 ${data.count}개 적용됨`, {
+                        level: "ok",
+                        title: "쿠키",
+                    });
+                } catch (e) {
+                    err.textContent = e.message || "업로드 실패";
+                } finally {
+                    btn.removeAttribute("aria-busy");
+                }
+            }
+
+            async function deleteCookies() {
+                const btn = document.getElementById("cookie-delete-btn");
+                const err = document.getElementById("settings-error");
+                err.textContent = "";
+                btn.setAttribute("aria-busy", "true");
+                try {
+                    await api("/api/settings/cookies", { method: "DELETE" });
+                    renderCookieStatus({ configured: false });
+                    toast("쿠키가 삭제되었습니다", {
+                        level: "ok",
+                        title: "쿠키",
+                    });
+                } catch (e) {
+                    err.textContent = e.message || "삭제 실패";
+                } finally {
+                    btn.removeAttribute("aria-busy");
+                }
+            }
+
+            /* -------- channel operations -------- */
+
+            async function forceRecord(channelId) {
+                try {
+                    await api(
+                        `/api/channels/${encodeURIComponent(channelId)}/record`,
+                        {
+                            method: "POST",
+                        },
+                    );
+                    await refreshAll();
+                } catch (e) {
+                    toast(`녹화 시작 실패 — ${e.message}`, {
+                        level: "err",
+                        title: "녹화",
+                    });
+                }
+            }
+            async function stopRecording(channelId) {
+                try {
+                    await api(
+                        `/api/channels/${encodeURIComponent(channelId)}/stop`,
+                        {
+                            method: "POST",
+                        },
+                    );
+                    await refreshAll();
+                } catch (e) {
+                    toast(`녹화 중지 실패 — ${e.message}`, {
+                        level: "err",
+                        title: "녹화",
+                    });
+                }
+            }
+            function confirmDeleteChannel(channelId, name) {
+                /* use a small inline confirm — keeps the user inside the app,
+                   does not depend on native confirm() styling */
+                const ok = window.confirm(
+                    `${name} 채널을 삭제할까요?\n(기존 녹화 파일은 유지됩니다)`,
+                );
+                if (!ok) return;
+                deleteChannel(channelId);
+            }
+            async function deleteChannel(channelId) {
+                try {
+                    await api(
+                        `/api/channels/${encodeURIComponent(channelId)}`,
+                        {
+                            method: "DELETE",
+                        },
+                    );
+                    await refreshAll();
+                    toast("채널 삭제됨", { level: "ok", title: "삭제" });
+                } catch (e) {
+                    toast(`삭제 실패 — ${e.message}`, {
+                        level: "err",
+                        title: "채널",
+                    });
+                }
+            }
+
+            /* -------- HLS player -------- */
+
+            let currentHls = null;
+
+            function fmtTime(sec) {
+                const s = Math.max(0, Number(sec) || 0);
+                const h = Math.floor(s / 3600);
+                const m = Math.floor((s % 3600) / 60);
+                const r = Math.floor(s % 60);
+                if (h > 0) {
+                    return `${h}:${String(m).padStart(2, "0")}:${String(r).padStart(2, "0")}`;
+                }
+                return `${m}:${String(r).padStart(2, "0")}`;
+            }
+
+            function resetClipUi() {
+                currentPlayerRecId = null;
+                if (clipPollTimer) {
+                    clearInterval(clipPollTimer);
+                    clipPollTimer = null;
+                }
+                const start = document.getElementById("clip-start");
+                const end = document.getElementById("clip-end");
+                start.value = "0";
+                end.value = "0";
+                start.max = "0";
+                end.max = "0";
+                document.getElementById("clip-start-label").textContent = "0:00";
+                document.getElementById("clip-end-label").textContent = "0:00";
+                document.getElementById("clip-status").textContent = "";
+                const dl = document.getElementById("clip-download");
+                dl.classList.add("hidden");
+                dl.removeAttribute("href");
+            }
+
+            function setupClipRange(duration) {
+                const dur = Math.max(0, Number(duration) || 0);
+                const start = document.getElementById("clip-start");
+                const end = document.getElementById("clip-end");
+                const step = dur > 600 ? 1 : 0.1;
+                start.min = "0";
+                end.min = "0";
+                start.max = String(dur);
+                end.max = String(dur);
+                start.step = String(step);
+                end.step = String(step);
+                start.value = "0";
+                end.value = String(dur);
+                document.getElementById("clip-start-label").textContent =
+                    fmtTime(0);
+                document.getElementById("clip-end-label").textContent =
+                    fmtTime(dur);
+                document.getElementById("player-duration").textContent =
+                    dur > 0 ? `길이 ${fmtTime(dur)}` : "HLS.js · 브라우저 재생";
+
+                const syncLabels = () => {
+                    let s = parseFloat(start.value);
+                    let e = parseFloat(end.value);
+                    if (s > e) {
+                        if (document.activeElement === start) {
+                            end.value = String(s);
+                            e = s;
+                        } else {
+                            start.value = String(e);
+                            s = e;
+                        }
+                    }
+                    document.getElementById("clip-start-label").textContent =
+                        fmtTime(s);
+                    document.getElementById("clip-end-label").textContent =
+                        fmtTime(e);
+                };
+                start.oninput = syncLabels;
+                end.oninput = syncLabels;
+            }
+
+            function playRecording(playlistUrl, channelName, recId) {
+                const modal = document.getElementById("player-modal");
+                const video = document.getElementById("player-video");
+                resetClipUi();
+                currentPlayerRecId = Number(recId);
+                document.getElementById("player-title").textContent =
+                    channelName || "녹화";
+                document.getElementById("player-sub").textContent =
+                    `녹화 #${recId}`;
+                document.getElementById("player-path").textContent =
+                    playlistUrl;
+
+                modal.classList.remove("hidden");
+                modal.dataset.open = "1";
+                if (currentHls) {
+                    currentHls.destroy();
+                    currentHls = null;
+                }
+                video.src = "";
+                video.load();
+
+                const onDuration = () => {
+                    const dur = video.duration;
+                    if (Number.isFinite(dur) && dur > 0) {
+                        setupClipRange(dur);
+                    }
+                };
+                video.addEventListener("loadedmetadata", onDuration);
+                video.addEventListener("durationchange", onDuration);
+
+                if (window.Hls && Hls.isSupported()) {
+                    currentHls = new Hls({
+                        enableWorker: true,
+                        lowLatencyMode: false,
+                    });
+                    currentHls.loadSource(playlistUrl);
+                    currentHls.attachMedia(video);
+                    currentHls.on(Hls.Events.MANIFEST_PARSED, () => {
+                        video.play().catch(() => {});
+                        onDuration();
+                    });
+                    currentHls.on(Hls.Events.ERROR, (_, data) => {
+                        if (data?.fatal) {
+                            toast(
+                                "HLS 스트림 오류 — 외부 플레이어로 시도하세요",
+                                {
+                                    level: "err",
+                                    title: "재생",
+                                },
+                            );
+                        }
+                    });
+                } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+                    video.src = playlistUrl;
+                    video.addEventListener(
+                        "loadedmetadata",
+                        () => {
+                            video.play();
+                            onDuration();
+                        },
+                        { once: true },
+                    );
+                } else {
+                    toast("이 브라우저에서는 HLS 재생이 지원되지 않습니다", {
+                        level: "err",
+                        title: "재생",
+                    });
+                }
+
+                api(`/api/recordings/${recId}/playlist`)
+                    .then((info) => {
+                        if (info.total_duration > 0) {
+                            setupClipRange(info.total_duration);
+                        }
+                    })
+                    .catch(() => {});
+            }
+
+            function startClipPoll(recId, startSec, endSec, fmt) {
+                if (clipPollTimer) clearInterval(clipPollTimer);
+                const statusEl = document.getElementById("clip-status");
+                clipPollTimer = setInterval(async () => {
+                    try {
+                        const q = new URLSearchParams({
+                            start_sec: String(startSec),
+                            end_sec: String(endSec),
+                            format: fmt,
+                        });
+                        const st = await api(
+                            `/api/recordings/${recId}/clip?${q}`,
+                        );
+                        if (
+                            st.status === "completed" ||
+                            st.status === "failed" ||
+                            st.status === "idle"
+                        ) {
+                            clearInterval(clipPollTimer);
+                            clipPollTimer = null;
+                            const btn = document.getElementById(
+                                "clip-create-btn",
+                            );
+                            btn.removeAttribute("aria-busy");
+                            if (st.status === "completed" && st.url) {
+                                statusEl.textContent = "클립 완료";
+                                const dl =
+                                    document.getElementById("clip-download");
+                                dl.href = st.url;
+                                dl.classList.remove("hidden");
+                                toast("클립 변환 완료", {
+                                    level: "ok",
+                                    title: "클립",
+                                });
+                            } else if (st.status === "failed") {
+                                statusEl.textContent =
+                                    st.error || "클립 변환 실패";
+                                toast(st.error || "클립 변환 실패", {
+                                    level: "err",
+                                    title: "클립",
+                                });
+                            } else {
+                                statusEl.textContent = "";
+                            }
+                        } else {
+                            statusEl.textContent = "클립 변환 중…";
+                        }
+                    } catch (_) {
+                        /* keep polling */
+                    }
+                }, 2000);
+            }
+
+            async function createClip() {
+                if (!currentPlayerRecId) return;
+                const startSec = parseFloat(
+                    document.getElementById("clip-start").value,
+                );
+                const endSec = parseFloat(
+                    document.getElementById("clip-end").value,
+                );
+                const fmt = document.getElementById("clip-format").value;
+                const btn = document.getElementById("clip-create-btn");
+                const statusEl = document.getElementById("clip-status");
+                const dl = document.getElementById("clip-download");
+
+                if (
+                    !Number.isFinite(startSec) ||
+                    !Number.isFinite(endSec) ||
+                    endSec <= startSec
+                ) {
+                    toast("올바른 구간을 선택하세요", {
+                        level: "err",
+                        title: "클립",
+                    });
+                    return;
+                }
+
+                btn.setAttribute("aria-busy", "true");
+                dl.classList.add("hidden");
+                statusEl.textContent = "클립 요청 중…";
+                try {
+                    const res = await api(
+                        `/api/recordings/${currentPlayerRecId}/clip`,
+                        {
+                            method: "POST",
+                            body: JSON.stringify({
+                                format: fmt,
+                                start_sec: startSec,
+                                end_sec: endSec,
+                            }),
+                        },
+                    );
+                    if (res.status === "completed" && res.url) {
+                        statusEl.textContent = "클립 완료";
+                        dl.href = res.url;
+                        dl.classList.remove("hidden");
+                        btn.removeAttribute("aria-busy");
+                        toast("클립 변환 완료", {
+                            level: "ok",
+                            title: "클립",
+                        });
+                        return;
+                    }
+                    if (res.status === "failed") {
+                        statusEl.textContent = res.error || "클립 변환 실패";
+                        btn.removeAttribute("aria-busy");
+                        toast(res.error || "클립 변환 실패", {
+                            level: "err",
+                            title: "클립",
+                        });
+                        return;
+                    }
+                    startClipPoll(
+                        currentPlayerRecId,
+                        startSec,
+                        endSec,
+                        fmt,
+                    );
+                } catch (e) {
+                    statusEl.textContent = "";
+                    btn.removeAttribute("aria-busy");
+                    toast(e.message || "클립 요청 실패", {
+                        level: "err",
+                        title: "클립",
+                    });
+                }
+            }
+
+            function closePlayer() {
+                const video = document.getElementById("player-video");
+                const modal = document.getElementById("player-modal");
+                modal.classList.add("hidden");
+                delete modal.dataset.open;
+                if (currentHls) {
+                    currentHls.destroy();
+                    currentHls = null;
+                }
+                video.pause();
+                video.src = "";
+                resetClipUi();
+            }
+
+            /* -------- event stream -------- */
+
+            function levelClass(level) {
+                const l = (level || "info").toLowerCase();
+                if (l === "error" || l === "err") return "err";
+                if (l === "warning" || l === "warn") return "warn";
+                if (l === "ok" || l === "success" || l === "done") return "ok";
+                return "info";
+            }
+
+            async function loadLogs() {
+                try {
+                    const data = await api("/api/logs?limit=80");
+                    const logs = data.logs || [];
+
+                    /* stronger dedup: compare length + signature of first row */
+                    const sig =
+                        logs.length +
+                        "|" +
+                        (logs[0] ? logs[0].ts + logs[0].message : "");
+                    if (sig === lastLogSig) return;
+                    lastLogSig = sig;
+
+                    const box = document.getElementById("log-box");
+                    box.innerHTML = "";
+                    if (logs.length === 0) {
+                        box.innerHTML = `<div class="stream-empty">아직 이벤트 없음</div>`;
+                    } else {
+                        logs.forEach((l, i) => {
+                            const div = document.createElement("div");
+                            const newOnes = logs.length > lastEventCount;
+                            div.className = `ev ${levelClass(l.level)}${i < 3 && newOnes ? " fresh" : ""}`;
+                            const t = (l.ts || "").slice(11, 19) || "--:--:--";
+                            const lvl = fmtLevel(l.level);
+                            div.innerHTML = `
+                                <span class="t">${escapeHtml(t)}</span>
+                                <span class="lvl">${escapeHtml(lvl)}</span>
+                                <span class="m">${escapeHtml(l.message || "")}</span>
+                            `;
+                            box.appendChild(div);
+                        });
+                        lastEventCount = logs.length;
+                    }
+                    document.getElementById("flow-stamp").textContent =
+                        new Date().toTimeString().slice(0, 8);
+                } catch (e) {}
+            }
+
+            function clearLogs() {
+                document.getElementById("log-box").innerHTML =
+                    `<div class="stream-empty">지워짐</div>`;
+            }
+
+            /* -------- boot -------- */
+
+            /* initial connecting indicator */
+            (function paintConnecting() {
+                const grid = document.getElementById("channels-grid");
+                if (grid && !grid.children.length) {
+                    grid.innerHTML = `
+                        <div class="ch-empty">
+                            <div class="h connecting">
+                                <span class="dot" aria-hidden="true"></span>
+                                서버에 연결 중
+                            </div>
+                            <div class="hint" style="margin-top: var(--s-3);">
+                                불러오는 중 · 첫 동기화
+                            </div>
+                        </div>`;
+                }
+            })();
+
+            window.addEventListener("DOMContentLoaded", async () => {
+                await refreshAll();
+                await loadLogs();
+                setInterval(refreshAll, 6000);
+                setInterval(loadLogs, 4500);
+            });
+        </script>
+    </body>
+</html>
