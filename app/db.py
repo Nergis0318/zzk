@@ -12,12 +12,11 @@ import time
 from contextlib import contextmanager
 from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
-from pathlib import Path
 from typing import Any, Optional
 
 import orjson
 
-DB_PATH = Path("data/zzk.db")
+from .paths import DB_PATH, ensure_runtime_dirs
 
 
 @dataclass
@@ -50,7 +49,7 @@ class RecordingRow:
 
 
 def init_db():
-    DB_PATH.parent.mkdir(parents=True, exist_ok=True)
+    ensure_runtime_dirs()
     with get_conn() as conn:
         conn.execute(
             """

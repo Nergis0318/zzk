@@ -50,6 +50,7 @@ from .db import (
     update_channel_settings,
     update_recording,
 )
+from .paths import DEFAULT_OUTPUT_DIR, ensure_runtime_dirs
 from .recorder import ChzzkRecorder, RecordingState
 
 # ---------------- Global state ----------------
@@ -472,6 +473,7 @@ async def stop_recording_for_channel(channel_id: str, reason: str = "manual"):
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     global chzzk_client
+    ensure_runtime_dirs(get_setting("output_dir", str(DEFAULT_OUTPUT_DIR)))
     chzzk_client = ChzzkClient()
 
     # restore any previous "recording" rows as "stopped" on restart (they are not truly running)
@@ -511,8 +513,9 @@ mimetypes.add_type("video/mp4", ".m4s")
 mimetypes.add_type("video/mp4", ".mp4")
 
 # Static recordings (supports both old and new layouts: /recordings/{chan}/{date}/{title}.m3u8 etc.)
-recordings_dir = Path("recordings")
-recordings_dir.mkdir(exist_ok=True)
+ensure_runtime_dirs()
+recordings_dir = Path(get_setting("output_dir", str(DEFAULT_OUTPUT_DIR)))
+ensure_runtime_dirs(recordings_dir)
 app.mount(
     "/recordings",
     StaticFiles(directory=str(recordings_dir), html=False),

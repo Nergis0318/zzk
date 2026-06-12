@@ -14,8 +14,9 @@ from typing import Any, Optional
 import orjson
 
 from .db import get_setting, set_setting
+from .paths import DATA_DIR, ensure_runtime_dirs
 
-COOKIE_DIR = Path("data")
+COOKIE_DIR = DATA_DIR
 COOKIE_PATH_KEY = "cookie_file"
 COOKIE_META_KEY = "cookie_meta"
 DEFAULT_COOKIE_FILE = COOKIE_DIR / "cookies.txt"
@@ -156,7 +157,7 @@ def save_cookie_file(content: bytes, filename: str) -> dict[str, Any]:
             "쿠키를 인식할 수 없습니다. Netscape cookies.txt 또는 JSON 형식을 사용하세요."
         )
 
-    COOKIE_DIR.mkdir(parents=True, exist_ok=True)
+    ensure_runtime_dirs()
     ext = Path(filename).suffix if filename else ".txt"
     if ext.lower() not in (".txt", ".json"):
         ext = ".txt"
