@@ -30,8 +30,7 @@ ENV PYTHONUNBUFFERED=1 \
 WORKDIR /app
 
 RUN apk add --no-cache ffmpeg curl \
-    && mkdir -p /app/data /app/recordings \
-    && chown -R zzk:zzk /app
+    && mkdir -p /app/data /app/recordings
 
 COPY --from=builder /app/.venv /app/.venv
 COPY --from=builder /app/app /app/app
