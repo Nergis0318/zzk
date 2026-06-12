@@ -150,8 +150,5 @@ recordings/
 *.sqlite
 *.sqlite3
 
-# uv
-uv.lock
-
 terminals/
 mcps/
