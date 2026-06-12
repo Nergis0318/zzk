@@ -17,7 +17,10 @@ uv sync
 uv run zzk
 ```
 
-브라우저에서 http://127.0.0.1:8001 접속
+브라우저에서 http://127.0.0.1:8000 접속
+
+`zzk` 명령은 기본적으로 8000 포트 + 리로드 없이 안정 실행합니다.
+(설치 후 `zzk --help`, `zzk --version` 사용 가능)
 
 ## 사용 방법
 
@@ -28,6 +31,8 @@ uv run zzk
 2. **자동 녹화**
    - "자동 녹화" 체크 시 백그라운드 모니터가 주기적으로 라이브 상태를 확인
    - 방송이 `OPEN` 되면 즉시 HLS 세그먼트 다운로드 시작
+
+   설치된 `zzk` 명령으로도 바로 실행됩니다 (`uv tool install .` 또는 `pip install .` 후 `zzk`).
 
  3. **녹화 파일 구조** (예시)
     ```
@@ -82,7 +87,12 @@ uv run zzk
 ## 개발 / 기여
 
 ```bash
-uv run uvicorn app.main:app --reload
+# 개발 시 (자동 리로드)
+uv run uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload
+
+# 패키지화된 CLI 테스트
+uv run zzk --reload
+zzk --version
 ```
 
 주요 소스:

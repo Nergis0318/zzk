@@ -118,6 +118,22 @@ def get_job(recording_id: int, fmt: str) -> Optional[ConversionJob]:
     return _jobs.get((recording_id, fmt))
 
 
+def cancel_jobs_for_recording(recording_id: int) -> None:
+    """Cancel in-flight conversion/clip tasks and drop cached job state."""
+    for key, job in list(_jobs.items()):
+        if key[0] != recording_id:
+            continue
+        if job.task and not job.task.done():
+            job.task.cancel()
+        del _jobs[key]
+    for key, job in list(_clip_jobs.items()):
+        if job.recording_id != recording_id:
+            continue
+        if job.task and not job.task.done():
+            job.task.cancel()
+        del _clip_jobs[key]
+
+
 def get_clip_job(
     recording_id: int, start_sec: float, end_sec: float, fmt: str
 ) -> Optional[ClipJob]:

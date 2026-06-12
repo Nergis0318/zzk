@@ -1,3 +1,7 @@
+---
+Language: Korean
+---
+
 # AGENTS.md
 
 Compact guidance for OpenCode (and similar) agents working in this repo. Every item is something an agent would likely get wrong or miss without reading multiple files.
@@ -64,3 +68,5 @@ Compact guidance for OpenCode (and similar) agents working in this repo. Every i
 - Test suite, lint config, type checker config, CI, pre-commit hooks, Dockerfiles, task runners (just/make/taskfile), workspace-level opencode.json or instruction files.
 
 Sources of truth used: README.md, pyproject.toml, .python-version, .gitignore, app/main.py, app/db.py, app/chzzk.py, app/recorder.py (and their constants/comments).
+
+코드수정후에 `uvx ruff format .` 실행

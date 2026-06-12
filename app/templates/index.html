@@ -2847,6 +2847,9 @@
                     const stopBtn = isRec
                         ? `<button type="button" class="btn btn-sm btn-rec" onclick="stopRecording('${escapeHtml(r.channel_id)}')">중지</button>`
                         : "";
+                    const deleteBtn = !isRec
+                        ? `<button type="button" class="btn btn-sm btn-danger" onclick="confirmDeleteRecording(${Number(r.id)}, '${escapeHtml(r.channel_name || "")}')">삭제</button>`
+                        : "";
                     const convertBtns = renderConvertButtons(r);
 
                     const safeName = escapeHtml(r.channel_name || "—");
@@ -2864,7 +2867,7 @@
                         <td class="num">${r.segment_count ?? 0}</td>
                         <td class="num">${fmtDur(r.total_duration || 0)}</td>
                         <td class="act">
-                            <div class="row-act">${playBtn}${m3u8}${convertBtns}${stopBtn}</div>
+                            <div class="row-act">${playBtn}${m3u8}${convertBtns}${stopBtn}${deleteBtn}</div>
                         </td>
                     `;
                     tbody.appendChild(tr);
@@ -3299,6 +3302,28 @@
                 if (!ok) return;
                 deleteChannel(channelId);
             }
+
+            function confirmDeleteRecording(recId, name) {
+                const ok = window.confirm(
+                    `${name || "녹화"} 기록을 삭제할까요?
+(디스크의 파일도 함께 삭제됩니다)`,
+                );
+                if (!ok) return;
+                deleteRecording(recId);
+            }
+            async function deleteRecording(recId) {
+                try {
+                    await api(`/api/recordings/${recId}`, { method: "DELETE" });
+                    await refreshAll();
+                    toast("녹화 기록 삭제됨", { level: "ok", title: "삭제" });
+                } catch (e) {
+                    toast(`삭제 실패 — ${e.message}`, {
+                        level: "err",
+                        title: "녹화",
+                    });
+                }
+            }
+
             async function deleteChannel(channelId) {
                 try {
                     await api(

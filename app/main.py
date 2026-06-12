@@ -11,10 +11,17 @@ from __future__ import annotations
 
 import asyncio
 import mimetypes
+import shutil
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
+from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 from typing import Optional
+
+try:
+    __version__ = version("zzk")
+except PackageNotFoundError:
+    __version__ = "0.0.0-dev"
 
 from fastapi import FastAPI, File, HTTPException, Request, UploadFile
 from fastapi.staticfiles import StaticFiles
@@ -25,6 +32,7 @@ from .chzzk import ChzzkClient, LiveDetail, extract_channel_id_from_url
 from .converter import (
     SUPPORTED_FORMATS,
     ConversionStatus,
+    cancel_jobs_for_recording,
     clip_job_to_dict,
     existing_clip_output,
     existing_output,
@@ -40,6 +48,7 @@ from .db import (
     add_or_update_channel,
     create_recording,
     delete_channel,
+    delete_recording,
     get_channel,
     get_latest_finished_recording,
     get_recording,
@@ -194,6 +203,63 @@ def _build_playlist_url(
             if playlist_path
             else None
         )
+
+
+def _output_roots() -> list[Path]:
+    configured = get_setting("output_dir", str(DEFAULT_OUTPUT_DIR))
+    roots: list[Path] = []
+    seen: set[str] = set()
+    for raw in (configured, str(DEFAULT_OUTPUT_DIR), "recordings"):
+        try:
+            resolved = Path(raw).resolve()
+        except OSError:
+            continue
+        key = str(resolved)
+        if key in seen:
+            continue
+        seen.add(key)
+        roots.append(resolved)
+    return roots
+
+
+def _path_is_under_output_root(path: Path) -> bool:
+    try:
+        resolved = path.resolve()
+    except OSError:
+        return False
+    for root in _output_roots():
+        if resolved == root:
+            return False
+        try:
+            resolved.relative_to(root)
+            return True
+        except ValueError:
+            continue
+    return False
+
+
+def _delete_recording_files(base_path: str, playlist_path: Optional[str]) -> list[str]:
+    deleted: list[str] = []
+    if not base_path:
+        return deleted
+
+    resolved_base = base_path
+    if playlist_path:
+        resolved_base, _ = _resolve_playlist_paths(base_path, playlist_path)
+
+    target = Path(resolved_base)
+    if not _path_is_under_output_root(target):
+        log_event("", f"녹화 파일 삭제 건너뜀 (경로 검증 실패): {target}", level="warn")
+        return deleted
+
+    target = target.resolve()
+    if target.is_dir():
+        shutil.rmtree(target)
+        deleted.append(str(target))
+    elif target.is_file():
+        target.unlink()
+        deleted.append(str(target))
+    return deleted
 
 
 def _broadcast_key(detail: LiveDetail) -> tuple[Optional[int], Optional[str]]:
@@ -449,7 +515,7 @@ async def start_recording_for_channel(
         else None
     )
 
-    if resume_info:
+    if resume_info and detail:
         prev_id, base_dir, playlist_path, meta = resume_info
         started_raw = meta.get("started_at") or ""
         try:
@@ -466,9 +532,7 @@ async def start_recording_for_channel(
             total_duration=float(meta.get("total_duration_sec") or 0.0),
             started_at=started_at,
         ):
-            recorder.channel_name = (
-                detail.channel.channel_name or recorder.channel_name
-            )
+            recorder.channel_name = detail.channel.channel_name or recorder.channel_name
             recorder.state.channel_name = recorder.channel_name
             rec_id = prev_id
             resumed = True
@@ -482,9 +546,7 @@ async def start_recording_for_channel(
 
     if not resumed:
         if detail and detail.status == "OPEN":
-            recorder.channel_name = (
-                detail.channel.channel_name or recorder.channel_name
-            )
+            recorder.channel_name = detail.channel.channel_name or recorder.channel_name
             recorder.state.channel_name = recorder.channel_name
             recorder.state.live_id = detail.live_id
             recorder.state.open_date = detail.open_date
@@ -808,6 +870,25 @@ async def api_list_recordings():
     return {"recordings": out}
 
 
+@app.delete("/api/recordings/{recording_id}")
+async def api_delete_recording(recording_id: int):
+    rec = get_recording(recording_id)
+    if not rec:
+        raise HTTPException(404, "녹화 기록을 찾을 수 없습니다.")
+    if rec.status == "recording" or rec.id in [
+        a.get("recording_id") for a in active.values()
+    ]:
+        raise HTTPException(400, "녹화 중인 항목은 삭제할 수 없습니다.")
+
+    cancel_jobs_for_recording(recording_id)
+    deleted_files = _delete_recording_files(rec.base_path, rec.playlist_path)
+    if not delete_recording(recording_id):
+        raise HTTPException(404, "녹화 기록을 찾을 수 없습니다.")
+
+    log_event(rec.channel_id, f"녹화 #{recording_id} 삭제됨")
+    return {"ok": True, "deleted_files": deleted_files}
+
+
 @app.post("/api/recordings/{recording_id}/convert")
 async def api_convert_recording(recording_id: int, payload: ConvertRequest):
     rec = get_recording(recording_id)
@@ -1111,13 +1192,61 @@ async def index(request: Request):
     return templates.TemplateResponse(request, "index.html")
 
 
-# ---------------- Dev runner ----------------
+# ---------------- CLI / runner (improved 제작성: prod-friendly defaults + flags) ----------------
 
 
 def run():
+    """Entry point for the `zzk` console script and `python -m app.main`.
+
+    Provides a minimal CLI so that after `uv run zzk`, `uv tool install .`,
+    or `pip install .` the command "zzk" starts the server with sane defaults.
+    """
+    import argparse
+    import sys
+
     import uvicorn
 
-    uvicorn.run("app.main:app", host="0.0.0.0", port=8001, reload=True)
+    parser = argparse.ArgumentParser(
+        prog="zzk",
+        description="지직 (zzk) - 치지직 방송 자동 녹화기 (웹 UI)",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""예시:
+  zzk                  # 127.0.0.1:8000 (프로덕션 기본)
+  zzk --port 9000      # 다른 포트
+  zzk --reload         # 개발 모드 (자동 리로드)
+  zzk --host 0.0.0.0 --port 8000
+""",
+    )
+    parser.add_argument(
+        "--version", action="version", version=f"%(prog)s {__version__}"
+    )
+    parser.add_argument(
+        "--host",
+        default="127.0.0.1",
+        help="바인드 호스트 (기본: 127.0.0.1, Docker는 0.0.0.0 권장)",
+    )
+    parser.add_argument("--port", type=int, default=8000, help="포트 (기본: 8000)")
+    parser.add_argument(
+        "--reload", action="store_true", help="개발용 자동 리로드 활성화"
+    )
+    parser.add_argument(
+        "--no-reload",
+        action="store_true",
+        help="리로드 비활성화 (기본값과 동일)",
+    )
+
+    args = parser.parse_args()
+
+    reload = bool(args.reload) and not bool(args.no_reload)
+
+    # When installed as package, users usually want stable run.
+    # Reload=True is only useful during `uv run uvicorn ... --reload` from source.
+    uvicorn.run(
+        "app.main:app",
+        host=args.host,
+        port=args.port,
+        reload=reload,
+    )
 
 
 if __name__ == "__main__":

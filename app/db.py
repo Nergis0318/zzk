@@ -335,6 +335,13 @@ def get_recording(recording_id: int) -> Optional[RecordingRow]:
         return _row_to_recording(r) if r else None
 
 
+def delete_recording(recording_id: int) -> bool:
+    with get_conn() as conn:
+        cur = conn.execute("DELETE FROM recordings WHERE id = ?", (recording_id,))
+        conn.commit()
+        return cur.rowcount > 0
+
+
 def get_latest_finished_recording(channel_id: str) -> Optional[RecordingRow]:
     """Most recent non-active recording for a channel (for same-broadcast resume)."""
     with get_conn() as conn:

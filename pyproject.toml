@@ -1,9 +1,27 @@
 [project]
 name = "zzk"
 version = "1.0.0"
-description = "지직 (zzk) - 치지직(치지직) 오픈소스 로컬 웹 방송 다운로더"
+description = "지직 (zzk) - 치지직 오픈소스 로컬 웹 방송 다운로더 (자동 녹화 + 복원력 있는 .ts/.m3u8)"
 readme = "README.md"
 requires-python = ">=3.11"
+license = {text = "GPL-3.0"}
+authors = [
+  {name = "zzk contributors"},
+]
+keywords = ["chzzk", "치지직", "recorder", "stream", "hls", "다운로더", "자동녹화"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Environment :: Web Environment",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Multimedia :: Video :: Capture",
+]
 dependencies = [
     "fastapi>=0.115",
     "uvicorn[standard]>=0.30",
@@ -14,6 +32,11 @@ dependencies = [
     "orjson>=3.11.9",
     "python-multipart>=0.0.9",
 ]
+
+[project.urls]
+Homepage = "https://github.com/nergis0318/zzk"
+Repository = "https://github.com/nergis0318/zzk"
+Issues = "https://github.com/nergis0318/zzk/issues"
 
 [project.scripts]
 zzk = "app.main:run"
