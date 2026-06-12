@@ -29,13 +29,12 @@ ENV PYTHONUNBUFFERED=1 \
 
 WORKDIR /app
 
-RUN apk add --no-cache ffmpeg \
-    && adduser -D -u 1000 -h /app zzk \
+RUN apk add --no-cache ffmpeg curl \
     && mkdir -p /app/data /app/recordings \
     && chown -R zzk:zzk /app
 
-COPY --from=builder --chown=zzk:zzk /app/.venv /app/.venv
-COPY --from=builder --chown=zzk:zzk /app/app /app/app
+COPY --from=builder /app/.venv /app/.venv
+COPY --from=builder /app/app /app/app
 
 USER zzk
 
@@ -44,6 +43,6 @@ EXPOSE 8000
 VOLUME ["/app/data", "/app/recordings"]
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-    CMD python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/')" || exit 1
+    CMD curl -f http://localhost:8000/ || exit 1
 
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
