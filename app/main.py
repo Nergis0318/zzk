@@ -3,20 +3,20 @@
 
 FastAPI + 자가호스팅 웹 UI
 - 채널 등록 → 방송 시작 대기 → 자동 녹화
-- 중단되더라도 .ts + .m3u8 로 해당 시점까지 재생 가능
-- 저장 구조: {channel}/{YYYY-MM-DD}/{title}.m3u8 + {channel}/{YYYY-MM-DD}/chunk/segment_XXXXX.ts
+- 중단되더라도 init.mp4 + .m4s + .m3u8 로 해당 시점까지 재생 가능
+- 저장 구조: {channel}/{YYYY-MM-DD}/{title}.m3u8 + chunk/init.mp4 + chunk/segment_XXXXX.m4s
 """
 
 from __future__ import annotations
 
 import asyncio
+import mimetypes
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
 
 from fastapi import FastAPI, File, HTTPException, Request, UploadFile
-from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
@@ -504,6 +504,10 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+# HLS segment types are not registered on all platforms; needed for browser/MSE playback.
+mimetypes.add_type("video/mp4", ".m4s")
+mimetypes.add_type("video/mp4", ".mp4")
+
 # Static recordings (supports both old and new layouts: /recordings/{chan}/{date}/{title}.m3u8 etc.)
 recordings_dir = Path("recordings")
 recordings_dir.mkdir(exist_ok=True)
@@ -531,10 +535,6 @@ class ChannelUpdate(BaseModel):
     auto_record: Optional[bool] = None
     quality: Optional[str] = None
     segment_minutes: Optional[int] = None
-
-
-class SearchQuery(BaseModel):
-    keyword: str
 
 
 class SettingsUpdate(BaseModel):
@@ -1006,20 +1006,6 @@ async def api_delete_cookies():
 @app.get("/")
 async def index(request: Request):
     return templates.TemplateResponse(request, "index.html")
-
-
-# Optional: direct file download of any recording asset (already served by static mount)
-# Supports nested paths e.g. /recordings/채널명/2026-06-12/방송제목.m3u8
-@app.get("/recordings/{rec_dir}/{file_path:path}")
-async def recording_file(rec_dir: str, file_path: str):
-    # Extra safety + content-type hints
-    full = recordings_dir / rec_dir / file_path
-    if not full.exists() or not full.is_file():
-        raise HTTPException(404)
-    # m3u8 should be served as text
-    if file_path.endswith(".m3u8"):
-        return FileResponse(full, media_type="application/vnd.apple.mpegurl")
-    return FileResponse(full)
 
 
 # ---------------- Dev runner ----------------

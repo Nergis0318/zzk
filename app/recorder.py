@@ -7,7 +7,7 @@ The custom segment downloader + always-playable .m3u8 logic remains for resilien
   Storage layout (per-broadcast session, supports multiple lives per day):
   {output_root}/{channel}/{YYYY-MM-DD}/{sanitized_title}/
       {title}.m3u8
-      chunk/segment_00000.ts ...   (or .m4s + init.mp4)
+      chunk/init.mp4 + segment_00000.m4s ...
       recording.json
   Multiple sessions on same day get unique subdirs (title/ or title_HHMMSS/ etc.)
   Legacy flat recordings (pre-2026-06) may have title.m3u8 + date-level chunk/ — still playable.
@@ -64,7 +64,6 @@ class RecordingState:
     is_recording: bool = True
     live_title: str = ""
     playlist_filename: str = ""
-    current_chunk: int = 1
     segment_count: int = 0
     total_duration: float = 0.0  # seconds
     last_error: Optional[str] = None
@@ -126,6 +125,7 @@ class ChzzkRecorder:
         self._playlist_filename: str = ""
         self._has_map: bool = False
         self._map_local_name: str = "init.mp4"
+        self._segment_ext: str = ".m4s"
         self._paths_locked: bool = False
 
     # ---------------- public API ----------------
@@ -162,7 +162,7 @@ class ChzzkRecorder:
     def prepare_paths(self, live_title: Optional[str] = None):
         """Compute the final base_dir and playlist filename using the requested layout:
         {channel}/{YYYY-MM-DD}/{sanitized_title}.m3u8
-        Segments live under base_dir/chunk/segment_XXXXX.{ts|m4s} (plus init.mp4 when stream uses fMP4/CMAF + #EXT-X-MAP)
+        Segments live under base_dir/chunk/init.mp4 + segment_XXXXX.m4s (fMP4/CMAF via #EXT-X-MAP)
         Call this as soon as channel_name + title are known (before or inside recording).
         """
         title = (
@@ -297,7 +297,7 @@ class ChzzkRecorder:
 
         self._open_root_playlist()
 
-        # segments dir (flat under date folder). Extension is .ts (legacy MPEG-TS) or .m4s (fMP4/CMAF when #EXT-X-MAP present from playlist).
+        # segments dir (flat under session folder): init.mp4 + segment_XXXXX.m4s (fMP4/CMAF)
         self._chunk_dir = self.state.base_dir / "chunk"
         self._chunk_dir.mkdir(exist_ok=True)
 
@@ -343,25 +343,19 @@ class ChzzkRecorder:
 
                 segments, map_uri = self._parse_media_playlist(pl_text, variant_url)
 
-                if map_uri and not self._has_map:
-                    try:
-                        mr = await self._http.get(map_uri, headers=get_segment_headers())
-                        mr.raise_for_status()
-                        map_bytes = mr.content
-                        map_path = self._chunk_dir / self._map_local_name
-                        map_path.write_bytes(map_bytes)
-                        map_rel = f"chunk/{self._map_local_name}"
-                        if self._root_pl_file:
-                            self._root_pl_file.write(f'#EXT-X-MAP:URI="{map_rel}"\n')
-                            self._root_pl_file.flush()
-                        self._has_map = True
-                    except Exception as me:
-                        self.state.last_error = f"MAP(init) 다운로드 실패: {me}"
+                if not self._has_map:
+                    init_url = map_uri or self._guess_init_url(segments, variant_url)
+                    if init_url:
+                        await self._ensure_init_segment(init_url)
 
                 new_added = 0
                 for dur, seg_full_url, seg_raw_name in segments:
                     if seg_full_url in self._seen_segment_urls:
                         continue
+
+                    if not self._has_map:
+                        # fMP4/CMAF requires init.mp4 before media segments are playable
+                        break
 
                     # Download segment
                     try:
@@ -376,9 +370,7 @@ class ChzzkRecorder:
                         await asyncio.sleep(0.5)
                         continue
 
-                    # Choose extension based on whether this stream uses fMP4/CMAF (MAP present)
-                    ext = ".m4s" if self._has_map else ".ts"
-                    seg_name = f"segment_{self._segment_counter:05d}{ext}"
+                    seg_name = f"segment_{self._segment_counter:05d}{self._segment_ext}"
                     seg_path = self._chunk_dir / seg_name
                     seg_path.write_bytes(seg_bytes)
 
@@ -398,7 +390,8 @@ class ChzzkRecorder:
                     pass
 
                 consecutive_errors = 0
-                self.state.last_error = None
+                if new_added > 0:
+                    self.state.last_error = None
                 await self._emit()
 
             except httpx.HTTPStatusError as he:
@@ -474,6 +467,42 @@ class ChzzkRecorder:
                         i += 1
             i += 1
         return segments, map_uri
+
+    def _guess_init_url(
+        self, segments: list[tuple[float, str, str]], variant_url: str
+    ) -> Optional[str]:
+        """Best-effort init.mp4 URL when the playlist omits #EXT-X-MAP."""
+        candidates: list[str] = []
+        variant_base = variant_url.rsplit("/", 1)[0] + "/"
+        candidates.append(urljoin(variant_base, self._map_local_name))
+        if segments:
+            seg_base = segments[0][1].rsplit("/", 1)[0] + "/"
+            candidates.append(urljoin(seg_base, self._map_local_name))
+        seen: set[str] = set()
+        for url in candidates:
+            if url and url not in seen:
+                seen.add(url)
+                return url
+        return None
+
+    async def _ensure_init_segment(self, init_url: str) -> bool:
+        if self._has_map or not self._chunk_dir:
+            return self._has_map
+        try:
+            mr = await self._http.get(init_url, headers=get_segment_headers())
+            mr.raise_for_status()
+            map_path = self._chunk_dir / self._map_local_name
+            map_path.write_bytes(mr.content)
+            map_rel = f"chunk/{self._map_local_name}"
+            if self._root_pl_file:
+                self._root_pl_file.write(f'#EXT-X-MAP:URI="{map_rel}"\n')
+                self._root_pl_file.flush()
+            self._has_map = True
+            self.state.last_error = None
+            return True
+        except Exception as me:
+            self.state.last_error = f"MAP(init) 다운로드 실패: {me}"
+            return False
 
     async def _finalize_all(self):
         # write ENDLIST to the main playlist
