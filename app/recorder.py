@@ -69,6 +69,7 @@ class RecordingState:
     segment_count: int = 0
     total_duration: float = 0.0  # seconds
     last_error: Optional[str] = None
+    ended_naturally: bool = False
     current_playlist: Optional[str] = (
         None  # filename of the main playable m3u8 (relative to base_dir)
     )
@@ -500,6 +501,7 @@ class ChzzkRecorder:
                         st.get("status") == "ENDED"
                         or st.get("playableStatus") == "NONE"
                     ):
+                        self.state.ended_naturally = True
                         break
                 except Exception:
                     pass

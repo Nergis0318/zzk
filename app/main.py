@@ -398,17 +398,6 @@ async def _cleanup_active_if_finished(channel_id: str):
         try:
             if rec_id:
                 status = "error" if recorder.state.last_error else "completed"
-                live_still_open = False
-                try:
-                    detail = await _chzzk().get_live_detail(channel_id)
-                    if detail and detail.status == "OPEN":
-                        if _broadcast_key(detail) == (
-                            recorder.state.live_id,
-                            recorder.state.open_date,
-                        ):
-                            live_still_open = True
-                except Exception:
-                    pass
 
                 update_recording(
                     rec_id,
@@ -418,7 +407,7 @@ async def _cleanup_active_if_finished(channel_id: str):
                     total_duration=round(recorder.state.total_duration, 1),
                     error=recorder.state.last_error,
                 )
-                if not live_still_open:
+                if recorder.state.ended_naturally:
                     asyncio.create_task(
                         _trigger_auto_convert(rec_id),
                         name=f"zzk-auto-convert-{rec_id}",
@@ -658,10 +647,6 @@ async def stop_recording_for_channel(channel_id: str, reason: str = "manual"):
 
     active.pop(channel_id, None)
     log_event(channel_id, f"녹화 중지 ({reason})")
-    asyncio.create_task(
-        _trigger_auto_convert(rec_id),
-        name=f"zzk-auto-convert-{rec_id}",
-    )
     return {"status": "stopped"}
 
 
