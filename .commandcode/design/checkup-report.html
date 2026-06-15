@@ -1,304 +1,473 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-	<meta charset="UTF-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<title>zzk - Checkup Report</title>
-	<script src="https://cdn.tailwindcss.com"></script>
-	<style>
-		body { font-family: Inter, ui-sans-serif, system-ui, sans-serif; }
-		.mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
-		.report-section { border: 1px solid #222226; background: #0a0a0b; position: relative; }
-		.corner-box { position: absolute; width: 20px; height: 20px; border: 1px solid #222226; background: #000; }
-	</style>
-</head>
-<body class="bg-black text-[#fafafa]">
-	<main class="mx-auto w-full max-w-6xl px-5 py-8 md:px-10 md:py-12">
-		<header class="report-section mb-8 p-6 md:p-8">
-			<div class="corner-box left-0 top-0 -translate-x-1/2 -translate-y-1/2"></div>
-			<div class="corner-box right-0 top-0 translate-x-1/2 -translate-y-1/2"></div>
-			<div class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-				<div>
-					<div class="mono mb-2 text-xs tracking-widest text-[#666]">// CHECKUP</div>
-					<h1 class="text-4xl font-bold tracking-tight md:text-6xl">zzk</h1>
-					<div class="mono mt-2 text-xs text-[#666]">app/templates/index.html · operations console</div>
-				</div>
-				<div class="mono text-left text-xs text-[#666] md:text-right">
-					<div>COMMANDCODE REPORT</div>
-					<div class="text-[#444]">2026-06-11</div>
-				</div>
-			</div>
-		</header>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>zzk - Checkup Report</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      body {
+        font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+      }
+      .mono {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      }
+      .report-section {
+        border: 1px solid #222226;
+        background: #0a0a0b;
+        position: relative;
+      }
+      .corner-box {
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        border: 1px solid #222226;
+        background: #000;
+      }
+    </style>
+  </head>
+  <body class="bg-black text-[#fafafa]">
+    <main class="mx-auto w-full max-w-6xl px-5 py-8 md:px-10 md:py-12">
+      <header class="report-section mb-8 p-6 md:p-8">
+        <div
+          class="corner-box left-0 top-0 -translate-x-1/2 -translate-y-1/2"
+        ></div>
+        <div
+          class="corner-box right-0 top-0 translate-x-1/2 -translate-y-1/2"
+        ></div>
+        <div
+          class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between"
+        >
+          <div>
+            <div class="mono mb-2 text-xs tracking-widest text-[#666]">
+              // CHECKUP
+            </div>
+            <h1 class="text-4xl font-bold tracking-tight md:text-6xl">zzk</h1>
+            <div class="mono mt-2 text-xs text-[#666]">
+              app/templates/index.html · operations console
+            </div>
+          </div>
+          <div class="mono text-left text-xs text-[#666] md:text-right">
+            <div>COMMANDCODE REPORT</div>
+            <div class="text-[#444]">2026-06-11</div>
+          </div>
+        </div>
+      </header>
 
-		<section class="report-section mb-8 p-6 md:p-8">
-			<div class="corner-box left-0 top-0 -translate-x-1/2 -translate-y-1/2"></div>
-			<div class="corner-box right-0 top-0 translate-x-1/2 -translate-y-1/2"></div>
-			<div class="grid gap-8 md:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
-				<div>
-					<div class="mono mb-2 text-xs tracking-widest text-[#666]">// OVERALL</div>
-					<div class="text-6xl font-bold tracking-tight md:text-7xl">49</div>
-					<div class="mt-1 text-lg text-[#666]">/ 60</div>
-					<div class="mt-4 inline-flex border border-[#fbbf24]/30 bg-[#fbbf24]/10 px-3 py-1 text-sm text-[#fbbf24]">WATCH · SHIP AFTER P0</div>
-				</div>
-				<div>
-					<div class="mono mb-3 text-xs tracking-widest text-[#666]">// TL;DR</div>
-					<p class="text-sm leading-6 text-[#a0a0a0]">
-						Dark, instrumented operations console for Chzzk recording. Composition matches
-						the Monitor + Operate work pattern. Type, color, and motion read as authored.
-						One critical client/server contract gap: the redesigned UI reads
-						<code class="mono text-[#fafafa]">channel.is_live</code> but the FastAPI
-						<code class="mono text-[#fafafa]">/api/channels</code> handler never emits it,
-						so the LIVE pill will never render.
-					</p>
-					<p class="mt-4 text-sm leading-6 text-[#fbbf24]">
-						Primary recommendation: add <code class="mono">is_live</code> to the channel
-						dict in <code class="mono">app/main.py</code>, back it with the monitor loop's
-						existing chzzk calls, then re-run <code class="mono">/design checkup</code>.
-					</p>
-				</div>
-			</div>
-		</section>
+      <section class="report-section mb-8 p-6 md:p-8">
+        <div
+          class="corner-box left-0 top-0 -translate-x-1/2 -translate-y-1/2"
+        ></div>
+        <div
+          class="corner-box right-0 top-0 translate-x-1/2 -translate-y-1/2"
+        ></div>
+        <div class="grid gap-8 md:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
+          <div>
+            <div class="mono mb-2 text-xs tracking-widest text-[#666]">
+              // OVERALL
+            </div>
+            <div class="text-6xl font-bold tracking-tight md:text-7xl">49</div>
+            <div class="mt-1 text-lg text-[#666]">/ 60</div>
+            <div
+              class="mt-4 inline-flex border border-[#fbbf24]/30 bg-[#fbbf24]/10 px-3 py-1 text-sm text-[#fbbf24]"
+            >
+              WATCH · SHIP AFTER P0
+            </div>
+          </div>
+          <div>
+            <div class="mono mb-3 text-xs tracking-widest text-[#666]">
+              // TL;DR
+            </div>
+            <p class="text-sm leading-6 text-[#a0a0a0]">
+              Dark, instrumented operations console for Chzzk recording.
+              Composition matches the Monitor + Operate work pattern. Type,
+              color, and motion read as authored. One critical client/server
+              contract gap: the redesigned UI reads
+              <code class="mono text-[#fafafa]">channel.is_live</code> but the
+              FastAPI
+              <code class="mono text-[#fafafa]">/api/channels</code> handler
+              never emits it, so the LIVE pill will never render.
+            </p>
+            <p class="mt-4 text-sm leading-6 text-[#fbbf24]">
+              Primary recommendation: add <code class="mono">is_live</code> to
+              the channel dict in <code class="mono">app/main.py</code>, back it
+              with the monitor loop's existing chzzk calls, then re-run
+              <code class="mono">/design checkup</code>.
+            </p>
+          </div>
+        </div>
+      </section>
 
-		<section class="report-section mb-8 p-6 md:p-8">
-			<div class="mono mb-6 text-xs tracking-widest text-[#666]">// VITAL SCORES</div>
-			<div class="overflow-x-auto">
-				<table class="w-full min-w-[720px] border-collapse text-sm">
-					<thead>
-						<tr class="border-b border-[#222226] text-left mono text-xs text-[#666]">
-							<th class="py-3 pr-4 font-normal">#</th>
-							<th class="py-3 pr-4 font-normal">VITAL</th>
-							<th class="py-3 pr-4 font-normal">SCORE</th>
-							<th class="py-3 pr-4 font-normal">STATUS</th>
-							<th class="py-3 font-normal">KEY FINDING</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr class="border-b border-[#1a1a1e]">
-							<td class="py-4 pr-4 text-[#555]">1</td>
-							<td class="py-4 pr-4 text-[#fafafa]">Intentionality</td>
-							<td class="py-4 pr-4 text-[#34d399] mono">9 / 10</td>
-							<td class="py-4 pr-4"><span class="border border-[#34d399]/30 bg-[#34d399]/10 px-2 py-0.5 text-xs text-[#34d399]">HEALTHY</span></td>
-							<td class="py-4 text-[#a0a0a0]">Warm-graphite OKLCH base, mono/sans pairing, custom keyframes — not Tailwind defaults.</td>
-						</tr>
-						<tr class="border-b border-[#1a1a1e]">
-							<td class="py-4 pr-4 text-[#555]">2</td>
-							<td class="py-4 pr-4 text-[#fafafa]">Readability</td>
-							<td class="py-4 pr-4 text-[#34d399] mono">9 / 10</td>
-							<td class="py-4 pr-4"><span class="border border-[#34d399]/30 bg-[#34d399]/10 px-2 py-0.5 text-xs text-[#34d399]">HEALTHY</span></td>
-							<td class="py-4 text-[#a0a0a0]">Body 14px / 1.5 line-height, Korean-friendly Plex Sans KR, tabulated numerics on measurements.</td>
-						</tr>
-						<tr class="border-b border-[#1a1a1e]">
-							<td class="py-4 pr-4 text-[#555]">3</td>
-							<td class="py-4 pr-4 text-[#fafafa]">Usability</td>
-							<td class="py-4 pr-4 text-[#fbbf24] mono">7 / 10</td>
-							<td class="py-4 pr-4"><span class="border border-[#fbbf24]/30 bg-[#fbbf24]/10 px-2 py-0.5 text-xs text-[#fbbf24]">WATCH</span></td>
-							<td class="py-4 text-[#a0a0a0]"><code class="mono text-[#fafafa]">editChannel</code> uses three stacked native <code class="mono">prompt()</code> calls instead of a real modal.</td>
-						</tr>
-						<tr class="border-b border-[#1a1a1e]">
-							<td class="py-4 pr-4 text-[#555]">4</td>
-							<td class="py-4 pr-4 text-[#fafafa]">Responsiveness</td>
-							<td class="py-4 pr-4 text-[#34d399] mono">8 / 10</td>
-							<td class="py-4 pr-4"><span class="border border-[#34d399]/30 bg-[#34d399]/10 px-2 py-0.5 text-xs text-[#34d399]">HEALTHY</span></td>
-							<td class="py-4 text-[#a0a0a0]">Three breakpoints (1200 / 820 / reduced-motion); rail / main / flow collapse cleanly.</td>
-						</tr>
-						<tr class="border-b border-[#1a1a1e]">
-							<td class="py-4 pr-4 text-[#555]">5</td>
-							<td class="py-4 pr-4 text-[#fafafa]">Speed</td>
-							<td class="py-4 pr-4 text-[#34d399] mono">8 / 10</td>
-							<td class="py-4 pr-4"><span class="border border-[#34d399]/30 bg-[#34d399]/10 px-2 py-0.5 text-xs text-[#34d399]">HEALTHY</span></td>
-							<td class="py-4 text-[#a0a0a0]">No layout shift, no heavy media, only Hls.js + Google Fonts + Tailwind CDN on the network path.</td>
-						</tr>
-						<tr class="border-b border-[#1a1a1e]">
-							<td class="py-4 pr-4 text-[#555]">6</td>
-							<td class="py-4 pr-4 text-[#fafafa]">Accessibility</td>
-							<td class="py-4 pr-4 text-[#34d399] mono">8 / 10</td>
-							<td class="py-4 pr-4"><span class="border border-[#34d399]/30 bg-[#34d399]/10 px-2 py-0.5 text-xs text-[#34d399]">HEALTHY</span></td>
-							<td class="py-4 text-[#a0a0a0]">Custom focus rings, <code class="mono">prefers-reduced-motion</code> honored, keyboard-reachable controls.</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-		</section>
+      <section class="report-section mb-8 p-6 md:p-8">
+        <div class="mono mb-6 text-xs tracking-widest text-[#666]">
+          // VITAL SCORES
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full min-w-[720px] border-collapse text-sm">
+            <thead>
+              <tr
+                class="border-b border-[#222226] text-left mono text-xs text-[#666]"
+              >
+                <th class="py-3 pr-4 font-normal">#</th>
+                <th class="py-3 pr-4 font-normal">VITAL</th>
+                <th class="py-3 pr-4 font-normal">SCORE</th>
+                <th class="py-3 pr-4 font-normal">STATUS</th>
+                <th class="py-3 font-normal">KEY FINDING</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-b border-[#1a1a1e]">
+                <td class="py-4 pr-4 text-[#555]">1</td>
+                <td class="py-4 pr-4 text-[#fafafa]">Intentionality</td>
+                <td class="py-4 pr-4 text-[#34d399] mono">9 / 10</td>
+                <td class="py-4 pr-4">
+                  <span
+                    class="border border-[#34d399]/30 bg-[#34d399]/10 px-2 py-0.5 text-xs text-[#34d399]"
+                    >HEALTHY</span
+                  >
+                </td>
+                <td class="py-4 text-[#a0a0a0]">
+                  Warm-graphite OKLCH base, mono/sans pairing, custom keyframes
+                  — not Tailwind defaults.
+                </td>
+              </tr>
+              <tr class="border-b border-[#1a1a1e]">
+                <td class="py-4 pr-4 text-[#555]">2</td>
+                <td class="py-4 pr-4 text-[#fafafa]">Readability</td>
+                <td class="py-4 pr-4 text-[#34d399] mono">9 / 10</td>
+                <td class="py-4 pr-4">
+                  <span
+                    class="border border-[#34d399]/30 bg-[#34d399]/10 px-2 py-0.5 text-xs text-[#34d399]"
+                    >HEALTHY</span
+                  >
+                </td>
+                <td class="py-4 text-[#a0a0a0]">
+                  Body 14px / 1.5 line-height, Korean-friendly Plex Sans KR,
+                  tabulated numerics on measurements.
+                </td>
+              </tr>
+              <tr class="border-b border-[#1a1a1e]">
+                <td class="py-4 pr-4 text-[#555]">3</td>
+                <td class="py-4 pr-4 text-[#fafafa]">Usability</td>
+                <td class="py-4 pr-4 text-[#fbbf24] mono">7 / 10</td>
+                <td class="py-4 pr-4">
+                  <span
+                    class="border border-[#fbbf24]/30 bg-[#fbbf24]/10 px-2 py-0.5 text-xs text-[#fbbf24]"
+                    >WATCH</span
+                  >
+                </td>
+                <td class="py-4 text-[#a0a0a0]">
+                  <code class="mono text-[#fafafa]">editChannel</code> uses
+                  three stacked native <code class="mono">prompt()</code> calls
+                  instead of a real modal.
+                </td>
+              </tr>
+              <tr class="border-b border-[#1a1a1e]">
+                <td class="py-4 pr-4 text-[#555]">4</td>
+                <td class="py-4 pr-4 text-[#fafafa]">Responsiveness</td>
+                <td class="py-4 pr-4 text-[#34d399] mono">8 / 10</td>
+                <td class="py-4 pr-4">
+                  <span
+                    class="border border-[#34d399]/30 bg-[#34d399]/10 px-2 py-0.5 text-xs text-[#34d399]"
+                    >HEALTHY</span
+                  >
+                </td>
+                <td class="py-4 text-[#a0a0a0]">
+                  Three breakpoints (1200 / 820 / reduced-motion); rail / main /
+                  flow collapse cleanly.
+                </td>
+              </tr>
+              <tr class="border-b border-[#1a1a1e]">
+                <td class="py-4 pr-4 text-[#555]">5</td>
+                <td class="py-4 pr-4 text-[#fafafa]">Speed</td>
+                <td class="py-4 pr-4 text-[#34d399] mono">8 / 10</td>
+                <td class="py-4 pr-4">
+                  <span
+                    class="border border-[#34d399]/30 bg-[#34d399]/10 px-2 py-0.5 text-xs text-[#34d399]"
+                    >HEALTHY</span
+                  >
+                </td>
+                <td class="py-4 text-[#a0a0a0]">
+                  No layout shift, no heavy media, only Hls.js + Google Fonts +
+                  Tailwind CDN on the network path.
+                </td>
+              </tr>
+              <tr class="border-b border-[#1a1a1e]">
+                <td class="py-4 pr-4 text-[#555]">6</td>
+                <td class="py-4 pr-4 text-[#fafafa]">Accessibility</td>
+                <td class="py-4 pr-4 text-[#34d399] mono">8 / 10</td>
+                <td class="py-4 pr-4">
+                  <span
+                    class="border border-[#34d399]/30 bg-[#34d399]/10 px-2 py-0.5 text-xs text-[#34d399]"
+                    >HEALTHY</span
+                  >
+                </td>
+                <td class="py-4 text-[#a0a0a0]">
+                  Custom focus rings,
+                  <code class="mono">prefers-reduced-motion</code> honored,
+                  keyboard-reachable controls.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
 
-		<section class="report-section mb-8 p-6 md:p-8">
-			<div class="mono mb-6 text-xs tracking-widest text-[#666]">// COGNITIVE LOAD / RISK</div>
-			<div class="grid gap-6 md:grid-cols-2">
-				<div>
-					<div class="mb-3 text-xl font-semibold">Medium · contained</div>
-					<ul class="space-y-3 text-sm text-[#a0a0a0]">
-						<li><span class="mono mr-2 text-[#34d399]">PASS</span>Three-zone composition maps to the real work (monitor + operate + audit).</li>
-						<li><span class="mono mr-2 text-[#34d399]">PASS</span>Signal palette is small and meaningful: amber armed, red recording, green done, blue info.</li>
-						<li><span class="mono mr-2 text-[#fbbf24]">WATCH</span>One client/server contract gap (is_live) breaks one of three status states.</li>
-						<li><span class="mono mr-2 text-[#fbbf24]">WATCH</span>editChannel still uses native dialogs instead of the app's own modal system.</li>
-						<li><span class="mono mr-2 text-[#ef4444]">FAIL</span>None of the audit-level blockers. The P0 is a contract fix, not a design fix.</li>
-					</ul>
-				</div>
-				<div>
-					<div class="mono mb-3 text-xs tracking-widest text-[#666]">// NEXT MODES</div>
-					<div class="flex flex-wrap gap-2">
-						<span class="border border-[#333] px-3 py-1 text-sm text-[#a0a0a0]">/design surface</span>
-						<span class="border border-[#333] px-3 py-1 text-sm text-[#a0a0a0]">/design interaction channels</span>
-						<span class="border border-[#333] px-3 py-1 text-sm text-[#a0a0a0]">/design checkup</span>
-					</div>
-					<div class="mono mt-6 mb-2 text-xs tracking-widest text-[#666]">// VERDICT</div>
-					<p class="text-sm leading-6 text-[#a0a0a0]">
-						Healthy product surface, one critical contract gap. Fix the P0, replace
-						<code class="mono text-[#fafafa]">editChannel</code> with a real modal, then
-						re-run checkup. Score is expected to land at 55-58 / 60 after those two
-						changes.
-					</p>
-				</div>
-			</div>
-		</section>
+      <section class="report-section mb-8 p-6 md:p-8">
+        <div class="mono mb-6 text-xs tracking-widest text-[#666]">
+          // COGNITIVE LOAD / RISK
+        </div>
+        <div class="grid gap-6 md:grid-cols-2">
+          <div>
+            <div class="mb-3 text-xl font-semibold">Medium · contained</div>
+            <ul class="space-y-3 text-sm text-[#a0a0a0]">
+              <li>
+                <span class="mono mr-2 text-[#34d399]">PASS</span>Three-zone
+                composition maps to the real work (monitor + operate + audit).
+              </li>
+              <li>
+                <span class="mono mr-2 text-[#34d399]">PASS</span>Signal palette
+                is small and meaningful: amber armed, red recording, green done,
+                blue info.
+              </li>
+              <li>
+                <span class="mono mr-2 text-[#fbbf24]">WATCH</span>One
+                client/server contract gap (is_live) breaks one of three status
+                states.
+              </li>
+              <li>
+                <span class="mono mr-2 text-[#fbbf24]">WATCH</span>editChannel
+                still uses native dialogs instead of the app's own modal system.
+              </li>
+              <li>
+                <span class="mono mr-2 text-[#ef4444]">FAIL</span>None of the
+                audit-level blockers. The P0 is a contract fix, not a design
+                fix.
+              </li>
+            </ul>
+          </div>
+          <div>
+            <div class="mono mb-3 text-xs tracking-widest text-[#666]">
+              // NEXT MODES
+            </div>
+            <div class="flex flex-wrap gap-2">
+              <span
+                class="border border-[#333] px-3 py-1 text-sm text-[#a0a0a0]"
+                >/design surface</span
+              >
+              <span
+                class="border border-[#333] px-3 py-1 text-sm text-[#a0a0a0]"
+                >/design interaction channels</span
+              >
+              <span
+                class="border border-[#333] px-3 py-1 text-sm text-[#a0a0a0]"
+                >/design checkup</span
+              >
+            </div>
+            <div class="mono mt-6 mb-2 text-xs tracking-widest text-[#666]">
+              // VERDICT
+            </div>
+            <p class="text-sm leading-6 text-[#a0a0a0]">
+              Healthy product surface, one critical contract gap. Fix the P0,
+              replace
+              <code class="mono text-[#fafafa]">editChannel</code> with a real
+              modal, then re-run checkup. Score is expected to land at 55-58 /
+              60 after those two changes.
+            </p>
+          </div>
+        </div>
+      </section>
 
-		<section class="report-section mb-8 p-6 md:p-8">
-			<div class="mono mb-6 text-xs tracking-widest text-[#666]">// WHAT'S WORKING</div>
-			<div class="grid gap-4 md:grid-cols-3">
-				<article class="border border-[#1f1f24] p-4">
-					<h2 class="mb-2 text-sm font-semibold">Composition</h2>
-					<p class="text-sm leading-6 text-[#a0a0a0]">
-						Rail / main / flow three-zone grid matches the Monitor + Operate work
-						pattern. The user can see system state, live channels, and event history
-						without tab-switching.
-					</p>
-				</article>
-				<article class="border border-[#1f1f24] p-4">
-					<h2 class="mb-2 text-sm font-semibold">Color system</h2>
-					<p class="text-sm leading-6 text-[#a0a0a0]">
-						OKLCH warm-graphite base (not the usual cold slate). Signal vocabulary is
-						small: amber armed, warm red recording, green done, blue info. Each role
-						has one job.
-					</p>
-				</article>
-				<article class="border border-[#1f1f24] p-4">
-					<h2 class="mb-2 text-sm font-semibold">Type system</h2>
-					<p class="text-sm leading-6 text-[#a0a0a0]">
-						IBM Plex Sans KR for prose, JetBrains Mono for all measurements, IDs,
-						paths, and timestamps. Mono carries the data; sans carries the meaning.
-					</p>
-				</article>
-				<article class="border border-[#1f1f24] p-4">
-					<h2 class="mb-2 text-sm font-semibold">Motion</h2>
-					<p class="text-sm leading-6 text-[#a0a0a0]">
-						Custom ease-out (<code class="mono">cubic-bezier(0.16, 1, 0.3, 1)</code>),
-						staggered card entrance, blinking REC dots at desynced cadences (1.2s /
-						1.6s / 2.4s), reduced-motion fully respected.
-					</p>
-				</article>
-				<article class="border border-[#1f1f24] p-4">
-					<h2 class="mb-2 text-sm font-semibold">Empty states</h2>
-					<p class="text-sm leading-6 text-[#a0a0a0]">
-						Every container (channels grid, ledger, event stream) has an authored
-						empty state with a "what goes here" headline and a "next action" hint.
-						None of them say "no data".
-					</p>
-				</article>
-				<article class="border border-[#1f1f24] p-4">
-					<h2 class="mb-2 text-sm font-semibold">Brand mark</h2>
-					<p class="text-sm leading-6 text-[#a0a0a0]">
-						Custom radial-gradient mark with an amber inner frame and a blinking red
-						dot. Reads as "recording booth" without leaning on the generic
-						video-camera icon.
-					</p>
-				</article>
-			</div>
-		</section>
+      <section class="report-section mb-8 p-6 md:p-8">
+        <div class="mono mb-6 text-xs tracking-widest text-[#666]">
+          // WHAT'S WORKING
+        </div>
+        <div class="grid gap-4 md:grid-cols-3">
+          <article class="border border-[#1f1f24] p-4">
+            <h2 class="mb-2 text-sm font-semibold">Composition</h2>
+            <p class="text-sm leading-6 text-[#a0a0a0]">
+              Rail / main / flow three-zone grid matches the Monitor + Operate
+              work pattern. The user can see system state, live channels, and
+              event history without tab-switching.
+            </p>
+          </article>
+          <article class="border border-[#1f1f24] p-4">
+            <h2 class="mb-2 text-sm font-semibold">Color system</h2>
+            <p class="text-sm leading-6 text-[#a0a0a0]">
+              OKLCH warm-graphite base (not the usual cold slate). Signal
+              vocabulary is small: amber armed, warm red recording, green done,
+              blue info. Each role has one job.
+            </p>
+          </article>
+          <article class="border border-[#1f1f24] p-4">
+            <h2 class="mb-2 text-sm font-semibold">Type system</h2>
+            <p class="text-sm leading-6 text-[#a0a0a0]">
+              IBM Plex Sans KR for prose, JetBrains Mono for all measurements,
+              IDs, paths, and timestamps. Mono carries the data; sans carries
+              the meaning.
+            </p>
+          </article>
+          <article class="border border-[#1f1f24] p-4">
+            <h2 class="mb-2 text-sm font-semibold">Motion</h2>
+            <p class="text-sm leading-6 text-[#a0a0a0]">
+              Custom ease-out (<code class="mono"
+                >cubic-bezier(0.16, 1, 0.3, 1)</code
+              >), staggered card entrance, blinking REC dots at desynced
+              cadences (1.2s / 1.6s / 2.4s), reduced-motion fully respected.
+            </p>
+          </article>
+          <article class="border border-[#1f1f24] p-4">
+            <h2 class="mb-2 text-sm font-semibold">Empty states</h2>
+            <p class="text-sm leading-6 text-[#a0a0a0]">
+              Every container (channels grid, ledger, event stream) has an
+              authored empty state with a "what goes here" headline and a "next
+              action" hint. None of them say "no data".
+            </p>
+          </article>
+          <article class="border border-[#1f1f24] p-4">
+            <h2 class="mb-2 text-sm font-semibold">Brand mark</h2>
+            <p class="text-sm leading-6 text-[#a0a0a0]">
+              Custom radial-gradient mark with an amber inner frame and a
+              blinking red dot. Reads as "recording booth" without leaning on
+              the generic video-camera icon.
+            </p>
+          </article>
+        </div>
+      </section>
 
-		<section class="report-section mb-8 p-6 md:p-8">
-			<div class="mono mb-6 text-xs tracking-widest text-[#666]">// PRIORITY ISSUES</div>
-			<div class="space-y-5">
-				<article class="border border-[#2a1d22] bg-[#110b0d] p-5">
-					<div class="mono mb-2 text-xs text-[#f43f5e]">P0 · CONTRACT</div>
-					<h2 class="mb-2 text-lg font-semibold"><code class="mono text-[#fafafa]">is_live</code> missing from <code class="mono text-[#fafafa]">/api/channels</code></h2>
-					<p class="mb-4 text-sm leading-6 text-[#a0a0a0]">
-						<code class="mono text-[#fafafa]">app/templates/index.html</code>'s
-						<code class="mono text-[#fafafa]">renderChannels()</code> branches on
-						<code class="mono text-[#fafafa]">ch.is_live</code> to render the LIVE pill.
-						<code class="mono text-[#fafafa]">app/main.py:391-422</code> never emits that
-						key. The pill will only ever show IDLE or REC. The backend already calls
-						<code class="mono text-[#fafafa]">chzzk_client.is_live()</code> in the monitor
-						loop at <code class="mono text-[#fafafa]">main.py:177</code> but does not
-						surface the result.
-					</p>
-					<div class="border-l border-[#fbbf24] pl-4 text-sm leading-6 text-[#fbbf24]">
-						FIX: add <code class="mono">is_live</code> to the channel dict in
-						<code class="mono">api_list_channels</code>; back it with a cached field
-						updated by the monitor loop to avoid per-refresh chzzk calls. Then re-run
-						<code class="mono">/design checkup</code>.
-					</div>
-				</article>
+      <section class="report-section mb-8 p-6 md:p-8">
+        <div class="mono mb-6 text-xs tracking-widest text-[#666]">
+          // PRIORITY ISSUES
+        </div>
+        <div class="space-y-5">
+          <article class="border border-[#2a1d22] bg-[#110b0d] p-5">
+            <div class="mono mb-2 text-xs text-[#f43f5e]">P0 · CONTRACT</div>
+            <h2 class="mb-2 text-lg font-semibold">
+              <code class="mono text-[#fafafa]">is_live</code> missing from
+              <code class="mono text-[#fafafa]">/api/channels</code>
+            </h2>
+            <p class="mb-4 text-sm leading-6 text-[#a0a0a0]">
+              <code class="mono text-[#fafafa]">app/templates/index.html</code
+              >'s
+              <code class="mono text-[#fafafa]">renderChannels()</code> branches
+              on <code class="mono text-[#fafafa]">ch.is_live</code> to render
+              the LIVE pill.
+              <code class="mono text-[#fafafa]">app/main.py:391-422</code> never
+              emits that key. The pill will only ever show IDLE or REC. The
+              backend already calls
+              <code class="mono text-[#fafafa]">chzzk_client.is_live()</code> in
+              the monitor loop at
+              <code class="mono text-[#fafafa]">main.py:177</code> but does not
+              surface the result.
+            </p>
+            <div
+              class="border-l border-[#fbbf24] pl-4 text-sm leading-6 text-[#fbbf24]"
+            >
+              FIX: add <code class="mono">is_live</code> to the channel dict in
+              <code class="mono">api_list_channels</code>; back it with a cached
+              field updated by the monitor loop to avoid per-refresh chzzk
+              calls. Then re-run <code class="mono">/design checkup</code>.
+            </div>
+          </article>
 
-				<article class="border border-[#2a1d22] bg-[#110b0d] p-5">
-					<div class="mono mb-2 text-xs text-[#f43f5e]">P1 · INTERACTION</div>
-					<h2 class="mb-2 text-lg font-semibold"><code class="mono text-[#fafafa]">editChannel</code> uses three stacked <code class="mono text-[#fafafa]">prompt()</code> calls</h2>
-					<p class="mb-4 text-sm leading-6 text-[#a0a0a0]">
-						The edit flow calls <code class="mono text-[#fafafa]">prompt()</code> twice
-						and <code class="mono text-[#fafafa]">confirm()</code> once in sequence,
-						breaking the modal system the rest of the app uses. Keyboard tab order is
-						interrupted, and the dialogs cannot match the surface styling.
-					</p>
-					<div class="border-l border-[#fbbf24] pl-4 text-sm leading-6 text-[#fbbf24]">
-						FIX: build a single "Edit Channel" modal reusing the Add Channel shell,
-						pre-fill with current values, save on one confirm. Run
-						<code class="mono">/design interaction channels</code> to spec the form.
-					</div>
-				</article>
+          <article class="border border-[#2a1d22] bg-[#110b0d] p-5">
+            <div class="mono mb-2 text-xs text-[#f43f5e]">P1 · INTERACTION</div>
+            <h2 class="mb-2 text-lg font-semibold">
+              <code class="mono text-[#fafafa]">editChannel</code> uses three
+              stacked <code class="mono text-[#fafafa]">prompt()</code> calls
+            </h2>
+            <p class="mb-4 text-sm leading-6 text-[#a0a0a0]">
+              The edit flow calls
+              <code class="mono text-[#fafafa]">prompt()</code> twice and
+              <code class="mono text-[#fafafa]">confirm()</code> once in
+              sequence, breaking the modal system the rest of the app uses.
+              Keyboard tab order is interrupted, and the dialogs cannot match
+              the surface styling.
+            </p>
+            <div
+              class="border-l border-[#fbbf24] pl-4 text-sm leading-6 text-[#fbbf24]"
+            >
+              FIX: build a single "Edit Channel" modal reusing the Add Channel
+              shell, pre-fill with current values, save on one confirm. Run
+              <code class="mono">/design interaction channels</code> to spec the
+              form.
+            </div>
+          </article>
 
-				<article class="border border-[#2a1d22] bg-[#110b0d] p-5">
-					<div class="mono mb-2 text-xs text-[#f43f5e]">P1 · TIMEZONE</div>
-					<h2 class="mb-2 text-lg font-semibold"><code class="mono text-[#fafafa]">started_at</code> is naive UTC, UI displays without timezone</h2>
-					<p class="mb-4 text-sm leading-6 text-[#a0a0a0]">
-						<code class="mono text-[#fafafa]">app/main.py:264</code> stores
-						<code class="mono text-[#fafafa]">datetime.utcnow()</code> (naive, UTC by
-						convention). The UI formats as
-						<code class="mono text-[#fafafa]">2026-06-11 14:23</code> with no zone
-						indicator. Korean users running a local recording tool will read this as
-						local time and misinterpret logs. Korea is UTC+9; the gap matters.
-					</p>
-					<div class="border-l border-[#fbbf24] pl-4 text-sm leading-6 text-[#fbbf24]">
-						FIX: store aware datetimes
-						(<code class="mono">datetime.now(timezone.utc)</code>), format as KST in
-						the renderer, and apply the same convention to the event stream.
-						<code class="mono">/design surface</code> will spec the time presentation
-						system.
-					</div>
-				</article>
+          <article class="border border-[#2a1d22] bg-[#110b0d] p-5">
+            <div class="mono mb-2 text-xs text-[#f43f5e]">P1 · TIMEZONE</div>
+            <h2 class="mb-2 text-lg font-semibold">
+              <code class="mono text-[#fafafa]">started_at</code> is naive UTC,
+              UI displays without timezone
+            </h2>
+            <p class="mb-4 text-sm leading-6 text-[#a0a0a0]">
+              <code class="mono text-[#fafafa]">app/main.py:264</code> stores
+              <code class="mono text-[#fafafa]">datetime.utcnow()</code> (naive,
+              UTC by convention). The UI formats as
+              <code class="mono text-[#fafafa]">2026-06-11 14:23</code> with no
+              zone indicator. Korean users running a local recording tool will
+              read this as local time and misinterpret logs. Korea is UTC+9; the
+              gap matters.
+            </p>
+            <div
+              class="border-l border-[#fbbf24] pl-4 text-sm leading-6 text-[#fbbf24]"
+            >
+              FIX: store aware datetimes (<code class="mono"
+                >datetime.now(timezone.utc)</code
+              >), format as KST in the renderer, and apply the same convention
+              to the event stream.
+              <code class="mono">/design surface</code> will spec the time
+              presentation system.
+            </div>
+          </article>
 
-				<article class="border border-[#2a1d22] bg-[#110b0d] p-5">
-					<div class="mono mb-2 text-xs text-[#f43f5e]">P2 · SCALING</div>
-					<h2 class="mb-2 text-lg font-semibold">No cached <code class="mono text-[#fafafa]">is_live</code> on the channel record</h2>
-					<p class="mb-4 text-sm leading-6 text-[#a0a0a0]">
-						Once <code class="mono text-[#fafafa]">is_live</code> is added to the
-						response, every 6s refresh will trigger one chzzk call per channel. With
-						several registered channels this scales poorly.
-					</p>
-					<div class="border-l border-[#fbbf24] pl-4 text-sm leading-6 text-[#fbbf24]">
-						FIX: persist <code class="mono">last_is_live</code> and
-						<code class="mono">last_is_live_at</code> on the channel row; update from
-						the monitor; emit in the API.
-					</div>
-				</article>
+          <article class="border border-[#2a1d22] bg-[#110b0d] p-5">
+            <div class="mono mb-2 text-xs text-[#f43f5e]">P2 · SCALING</div>
+            <h2 class="mb-2 text-lg font-semibold">
+              No cached <code class="mono text-[#fafafa]">is_live</code> on the
+              channel record
+            </h2>
+            <p class="mb-4 text-sm leading-6 text-[#a0a0a0]">
+              Once <code class="mono text-[#fafafa]">is_live</code> is added to
+              the response, every 6s refresh will trigger one chzzk call per
+              channel. With several registered channels this scales poorly.
+            </p>
+            <div
+              class="border-l border-[#fbbf24] pl-4 text-sm leading-6 text-[#fbbf24]"
+            >
+              FIX: persist <code class="mono">last_is_live</code> and
+              <code class="mono">last_is_live_at</code> on the channel row;
+              update from the monitor; emit in the API.
+            </div>
+          </article>
 
-				<article class="border border-[#2a1d22] bg-[#110b0d] p-5">
-					<div class="mono mb-2 text-xs text-[#f43f5e]">P2 · BRITTLENESS</div>
-					<h2 class="mb-2 text-lg font-semibold">Event stream dedup uses a 3-line signature</h2>
-					<p class="mb-4 text-sm leading-6 text-[#a0a0a0]">
-						<code class="mono text-[#fafafa]">loadLogs()</code> builds
-						<code class="mono text-[#fafafa]">sig = logs.slice(0, 3).map(...).join("|")</code>
-						and returns early if unchanged. Safe today because older log rows are
-						immutable, but a brittle pattern if log content ever becomes mutable.
-					</p>
-					<div class="border-l border-[#fbbf24] pl-4 text-sm leading-6 text-[#fbbf24]">
-						FIX: compare the full payload or use a server-emitted monotonic id. Not
-						urgent.
-					</div>
-				</article>
-			</div>
-		</section>
+          <article class="border border-[#2a1d22] bg-[#110b0d] p-5">
+            <div class="mono mb-2 text-xs text-[#f43f5e]">P2 · BRITTLENESS</div>
+            <h2 class="mb-2 text-lg font-semibold">
+              Event stream dedup uses a 3-line signature
+            </h2>
+            <p class="mb-4 text-sm leading-6 text-[#a0a0a0]">
+              <code class="mono text-[#fafafa]">loadLogs()</code> builds
+              <code class="mono text-[#fafafa]"
+                >sig = logs.slice(0, 3).map(...).join("|")</code
+              >
+              and returns early if unchanged. Safe today because older log rows
+              are immutable, but a brittle pattern if log content ever becomes
+              mutable.
+            </p>
+            <div
+              class="border-l border-[#fbbf24] pl-4 text-sm leading-6 text-[#fbbf24]"
+            >
+              FIX: compare the full payload or use a server-emitted monotonic
+              id. Not urgent.
+            </div>
+          </article>
+        </div>
+      </section>
 
-		<footer class="mono py-8 text-center text-xs tracking-widest text-[#444]">
-			Generated with CommandCode - 2026-06-11
-		</footer>
-	</main>
-</body>
+      <footer class="mono py-8 text-center text-xs tracking-widest text-[#444]">
+        Generated with CommandCode - 2026-06-11
+      </footer>
+    </main>
+  </body>
 </html>

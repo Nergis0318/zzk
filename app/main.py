@@ -397,7 +397,13 @@ async def _cleanup_active_if_finished(channel_id: str):
         rec_id = entry.get("recording_id")
         try:
             if rec_id:
-                status = "error" if recorder.state.last_error else "completed"
+                status = (
+                    "completed"
+                    if recorder.state.ended_naturally
+                    else "error"
+                    if recorder.state.last_error
+                    else "completed"
+                )
 
                 update_recording(
                     rec_id,

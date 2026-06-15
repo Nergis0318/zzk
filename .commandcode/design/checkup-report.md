@@ -18,14 +18,14 @@ A dark, instrumented operations console for monitoring and operating Chzzk recor
 
 ## Vitals (6 × 10 = 60)
 
-| # | Vital | Score | Status | One-line finding |
-|---|---|---|---|---|
-| 1 | Intentionality | 9 | Healthy | Warm-graphite OKLCH base, mono/sans pairing, custom keyframes — not Tailwind defaults. |
-| 2 | Readability | 9 | Healthy | Body 14px, 1.5 line-height, Korean-friendly Plex Sans KR, tabulated numerics for measurements. |
-| 3 | Usability | 7 | Watch | Core flow works; `editChannel` uses stacked `prompt()` calls instead of a real form modal. |
-| 4 | Responsiveness | 8 | Healthy | Three breakpoints (1200/820 + reduced-motion); rail/main/flow collapse cleanly. |
-| 5 | Speed | 8 | Healthy | No layout shift, no heavy media, no third-party JS beyond Tailwind/Hls/fonts CDNs. |
-| 6 | Accessibility | 8 | Healthy | Custom focus rings, `prefers-reduced-motion` respected, keyboard-reachable controls. |
+| #   | Vital          | Score | Status  | One-line finding                                                                               |
+| --- | -------------- | ----- | ------- | ---------------------------------------------------------------------------------------------- |
+| 1   | Intentionality | 9     | Healthy | Warm-graphite OKLCH base, mono/sans pairing, custom keyframes — not Tailwind defaults.         |
+| 2   | Readability    | 9     | Healthy | Body 14px, 1.5 line-height, Korean-friendly Plex Sans KR, tabulated numerics for measurements. |
+| 3   | Usability      | 7     | Watch   | Core flow works; `editChannel` uses stacked `prompt()` calls instead of a real form modal.     |
+| 4   | Responsiveness | 8     | Healthy | Three breakpoints (1200/820 + reduced-motion); rail/main/flow collapse cleanly.                |
+| 5   | Speed          | 8     | Healthy | No layout shift, no heavy media, no third-party JS beyond Tailwind/Hls/fonts CDNs.             |
+| 6   | Accessibility  | 8     | Healthy | Custom focus rings, `prefers-reduced-motion` respected, keyboard-reachable controls.           |
 
 **Total: 49 / 60**
 

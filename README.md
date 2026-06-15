@@ -55,6 +55,7 @@ docker run -d \
 ```
 
 Windows PowerShell:
+
 ```powershell
 docker run -d --name zzk -p 8000:8000 -v "${PWD}/data:/app/data" -v "${PWD}/recordings:/app/recordings" zzk
 ```
@@ -81,20 +82,21 @@ streamlink 설정 파일을 마운트하세요:
 
    설치된 `zzk` 명령으로도 바로 실행됩니다 (`uv tool install .` 또는 `pip install .` 후 `zzk`).
 
- 3. **녹화 파일 구조** (예시)
-    ```
-    recordings/
-    └── 채널명/
-        └── 2026-06-12/
-            └── 방송제목/
-                ├── 방송제목.m3u8     ← 이 세션 전체 재생
-                ├── recording.json
-                └── chunk/
-                    └── segment_00000.ts ...
-    ```
-    같은 날 여러 방송/재접속 시 자동으로 `방송제목/`, `방송제목_HHMMSS/`, ... 로 분리 저장.
-    - **중간에 꺼져도 재생 가능**: m3u8 + chunk/ 세그먼트 그대로 VLC/mpv/PotPlayer로 열기
-   - 웹 UI 안에서도 "재생" 버튼으로 브라우저 내 HLS 재생 가능 (hls.js)
+3. **녹화 파일 구조** (예시)
+   ```
+   recordings/
+   └── 채널명/
+       └── 2026-06-12/
+           └── 방송제목/
+               ├── 방송제목.m3u8     ← 이 세션 전체 재생
+               ├── recording.json
+               └── chunk/
+                   └── segment_00000.ts ...
+   ```
+   같은 날 여러 방송/재접속 시 자동으로 `방송제목/`, `방송제목_HHMMSS/`, ... 로 분리 저장.
+   - **중간에 꺼져도 재생 가능**: m3u8 + chunk/ 세그먼트 그대로 VLC/mpv/PotPlayer로 열기
+
+- 웹 UI 안에서도 "재생" 버튼으로 브라우저 내 HLS 재생 가능 (hls.js)
 
 4. **분할 저장의 장점**
    - 파일 크기 관리 용이
@@ -144,6 +146,7 @@ zzk --version
 ```
 
 주요 소스:
+
 - `app/chzzk.py` — API 클라이언트 (메타데이터/상태) + **streamlink 전용 스트림 URL 해석기**
 - `app/recorder.py` — 핵심 세그먼트 다운로더 (복원력 + 분할 로직). **streamlink only**로 HLS URL 해석
 - `app/db.py` — SQLite (채널 + 녹화 이력)
