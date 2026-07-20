@@ -391,20 +391,8 @@ def _row_to_recording(r: sqlite3.Row) -> RecordingRow:
 # ---------------- Settings (simple key-value) ----------------
 
 
-def _ensure_settings_table(conn: sqlite3.Connection):
-    conn.execute(
-        """
-        CREATE TABLE IF NOT EXISTS settings (
-            key TEXT PRIMARY KEY,
-            value TEXT NOT NULL
-        )
-        """
-    )
-
-
 def get_setting(key: str, default: Any = None) -> Any:
     with get_conn() as conn:
-        _ensure_settings_table(conn)
         r = conn.execute("SELECT value FROM settings WHERE key = ?", (key,)).fetchone()
         if not r:
             return default
@@ -419,7 +407,6 @@ def get_setting(key: str, default: Any = None) -> Any:
 
 def set_setting(key: str, value: Any):
     with get_conn() as conn:
-        _ensure_settings_table(conn)
         conn.execute(
             "INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value=excluded.value",
             (

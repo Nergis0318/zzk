@@ -37,37 +37,22 @@ class ConversionJob:
     started_at: Optional[str] = None
     ended_at: Optional[str] = None
     task: Optional[asyncio.Task] = None
-    kind: str = "full"  # "full" | "clip"
     start_sec: Optional[float] = None
     end_sec: Optional[float] = None
 
 
-_jobs: dict[tuple[int, str], ConversionJob] = {}
-_clip_jobs: dict[str, ClipJob] = {}
+def _job_key(
+    recording_id: int,
+    fmt: str,
+    start_sec: Optional[float] = None,
+    end_sec: Optional[float] = None,
+) -> str:
+    if start_sec is not None:
+        return f"{recording_id}:{int(start_sec)}:{int(end_sec)}:{fmt}"
+    return f"{recording_id}:{fmt}"
 
 
-@dataclass
-class ClipJob:
-    recording_id: int
-    format: str
-    start_sec: float
-    end_sec: float
-    status: ConversionStatus = ConversionStatus.PENDING
-    output_path: Optional[Path] = None
-    error: Optional[str] = None
-    started_at: Optional[str] = None
-    ended_at: Optional[str] = None
-    task: Optional[asyncio.Task] = None
-
-    @property
-    def key(self) -> str:
-        return clip_job_key(
-            self.recording_id, self.start_sec, self.end_sec, self.format
-        )
-
-
-def clip_job_key(recording_id: int, start_sec: float, end_sec: float, fmt: str) -> str:
-    return f"{recording_id}:{int(start_sec)}:{int(end_sec)}:{fmt.lower()}"
+_jobs: dict[str, ConversionJob] = {}
 
 
 def find_ffmpeg(custom_path: Optional[str] = None) -> Optional[str]:
@@ -75,16 +60,7 @@ def find_ffmpeg(custom_path: Optional[str] = None) -> Optional[str]:
         p = Path(custom_path)
         if p.is_file():
             return str(p)
-    found = shutil.which("ffmpeg")
-    if found:
-        return found
-    for candidate in (
-        Path("C:/ffmpeg/bin/ffmpeg.exe"),
-        Path("C:/Program Files/ffmpeg/bin/ffmpeg.exe"),
-    ):
-        if candidate.is_file():
-            return str(candidate)
-    return None
+    return shutil.which("ffmpeg")
 
 
 def output_path_for(playlist_path: Path, fmt: str) -> Path:
@@ -115,29 +91,23 @@ def existing_clip_output(
 
 
 def get_job(recording_id: int, fmt: str) -> Optional[ConversionJob]:
-    return _jobs.get((recording_id, fmt))
+    return _jobs.get(_job_key(recording_id, fmt))
+
+
+def get_clip_job(
+    recording_id: int, start_sec: float, end_sec: float, fmt: str
+) -> Optional[ConversionJob]:
+    return _jobs.get(_job_key(recording_id, fmt, start_sec, end_sec))
 
 
 def cancel_jobs_for_recording(recording_id: int) -> None:
     """Cancel in-flight conversion/clip tasks and drop cached job state."""
     for key, job in list(_jobs.items()):
-        if key[0] != recording_id:
-            continue
-        if job.task and not job.task.done():
-            job.task.cancel()
-        del _jobs[key]
-    for key, job in list(_clip_jobs.items()):
         if job.recording_id != recording_id:
             continue
         if job.task and not job.task.done():
             job.task.cancel()
-        del _clip_jobs[key]
-
-
-def get_clip_job(
-    recording_id: int, start_sec: float, end_sec: float, fmt: str
-) -> Optional[ClipJob]:
-    return _clip_jobs.get(clip_job_key(recording_id, start_sec, end_sec, fmt))
+        del _jobs[key]
 
 
 def job_to_dict(job: ConversionJob) -> dict:
@@ -149,22 +119,7 @@ def job_to_dict(job: ConversionJob) -> dict:
         "error": job.error,
         "started_at": job.started_at,
         "ended_at": job.ended_at,
-        "kind": job.kind,
-        "start_sec": job.start_sec,
-        "end_sec": job.end_sec,
-    }
-
-
-def clip_job_to_dict(job: ClipJob) -> dict:
-    return {
-        "recording_id": job.recording_id,
-        "format": job.format,
-        "status": job.status.value,
-        "output_path": str(job.output_path) if job.output_path else None,
-        "error": job.error,
-        "started_at": job.started_at,
-        "ended_at": job.ended_at,
-        "kind": "clip",
+        "kind": "clip" if job.start_sec is not None else "full",
         "start_sec": job.start_sec,
         "end_sec": job.end_sec,
     }
@@ -270,7 +225,7 @@ def _ffmpeg_args(
 
 
 async def _run_ffmpeg(
-    job: ConversionJob | ClipJob,
+    job: ConversionJob,
     ffmpeg: str,
     playlist: Path,
     output: Path,
@@ -307,7 +262,7 @@ async def _run_ffmpeg(
             return
         job.status = ConversionStatus.COMPLETED
         job.output_path = output
-        if delete_segments and isinstance(job, ConversionJob):
+        if delete_segments and job.start_sec is None:
             delete_hls_source(playlist)
     except FileNotFoundError:
         job.status = ConversionStatus.FAILED
@@ -338,7 +293,7 @@ async def start_conversion(
     if not playlist_path.is_file():
         raise FileNotFoundError("재생 목록(.m3u8) 파일을 찾을 수 없습니다.")
 
-    key = (recording_id, fmt)
+    key = _job_key(recording_id, fmt)
     existing = _jobs.get(key)
     if existing and existing.task and not existing.task.done():
         return existing
@@ -407,14 +362,14 @@ async def start_clip(
     if total > 0:
         end_sec = min(end_sec, total)
 
-    key = clip_job_key(recording_id, start_sec, end_sec, fmt)
-    existing = _clip_jobs.get(key)
+    key = _job_key(recording_id, fmt, start_sec, end_sec)
+    existing = _jobs.get(key)
     if existing and existing.task and not existing.task.done():
         return existing
 
     output = clip_output_path(playlist_path, start_sec, end_sec, fmt)
     if output.is_file() and not overwrite:
-        job = ClipJob(
+        job = ConversionJob(
             recording_id=recording_id,
             format=fmt,
             start_sec=start_sec,
@@ -424,7 +379,7 @@ async def start_clip(
             started_at=datetime.now(timezone.utc).isoformat(timespec="seconds"),
             ended_at=datetime.now(timezone.utc).isoformat(timespec="seconds"),
         )
-        _clip_jobs[key] = job
+        _jobs[key] = job
         return job
 
     ffmpeg = find_ffmpeg(ffmpeg_path)
@@ -433,14 +388,14 @@ async def start_clip(
             "ffmpeg를 찾을 수 없습니다. https://ffmpeg.org 에서 설치 후 PATH에 추가하세요."
         )
 
-    job = ClipJob(
+    job = ConversionJob(
         recording_id=recording_id,
         format=fmt,
         start_sec=start_sec,
         end_sec=end_sec,
         output_path=output,
     )
-    _clip_jobs[key] = job
+    _jobs[key] = job
     job.task = asyncio.create_task(
         _run_ffmpeg(
             job,

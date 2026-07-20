@@ -48,8 +48,7 @@ SEGMENT_HEADERS = {
 
 def get_segment_headers() -> dict[str, str]:
     headers = {**SEGMENT_HEADERS}
-    cookie_str = get_cookie_string()
-    if cookie_str:
+    if cookie_str := get_cookie_string():
         headers["Cookie"] = cookie_str
     return headers
 
@@ -234,17 +233,12 @@ class ChzzkRecorder:
     def _sanitize_name(self, name: str) -> str:
         if not name:
             return ""
-        # map spaces and invalid chars to _ ; keep only safe chars for cross-platform filenames
         safe = "".join(
             c if c.isalnum() or c in ("-", "_", ".") else "_" for c in name
         ).strip()
-        # collapse repeated _
         while "__" in safe:
             safe = safe.replace("__", "_")
-        safe = safe.strip("._-")
-        while "__" in safe:
-            safe = safe.replace("__", "_")
-        return safe or ""
+        return safe.strip("._-") or ""
 
     def _make_unique_playlist_name(self, base: str, directory: Path) -> str:
         candidate = f"{base}.m3u8"

@@ -12,6 +12,7 @@ from __future__ import annotations
 import asyncio
 import mimetypes
 import shutil
+from collections import deque
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 from importlib.metadata import PackageNotFoundError, version
@@ -33,7 +34,6 @@ from .converter import (
     SUPPORTED_FORMATS,
     ConversionStatus,
     cancel_jobs_for_recording,
-    clip_job_to_dict,
     existing_clip_output,
     existing_output,
     get_clip_job,
@@ -89,8 +89,7 @@ active: dict[str, dict] = {}
 dismissed_live: dict[str, tuple[Optional[int], Optional[str]]] = {}
 
 # Simple in-memory recent log ring (for UI)
-LOG_BUFFER: list[dict] = []
-LOG_MAX = 300
+LOG_BUFFER: deque[dict] = deque(maxlen=300)
 
 
 def log_event(channel_id: str, message: str, level: str = "info"):
@@ -101,38 +100,8 @@ def log_event(channel_id: str, message: str, level: str = "info"):
         "level": level,
     }
     LOG_BUFFER.append(entry)
-    if len(LOG_BUFFER) > LOG_MAX:
-        del LOG_BUFFER[: len(LOG_BUFFER) - LOG_MAX]
     # also print for server console
     print(f"[zzk] [{channel_id[:8]}] {message}")
-
-
-def _resolve_playlist_paths(base_path: str, playlist_path: str) -> tuple[str, str]:
-    """Return base_path/playlist_path that exist on disk.
-
-    Handles stale DB rows where an early prepare_paths claimed an empty session dir
-    but the recorder later wrote files to a sibling *_1 directory.
-    """
-    bp = Path(base_path)
-    if (bp / playlist_path).is_file():
-        return base_path, playlist_path
-    parent = bp.parent
-    if not parent.is_dir():
-        return base_path, playlist_path
-    stem = bp.name
-    candidates = sorted(
-        (
-            d
-            for d in parent.iterdir()
-            if d.is_dir()
-            and (d.name == stem or d.name.startswith(f"{stem}_"))
-            and (d / playlist_path).is_file()
-        ),
-        key=lambda d: d.name,
-    )
-    if candidates:
-        return str(candidates[0]), playlist_path
-    return base_path, playlist_path
 
 
 def _resolve_recording_playlist(
@@ -140,7 +109,6 @@ def _resolve_recording_playlist(
 ) -> Optional[Path]:
     if not playlist_path:
         return None
-    base_path, playlist_path = _resolve_playlist_paths(base_path, playlist_path)
     full = Path(base_path) / playlist_path
     return full if full.is_file() else None
 
@@ -174,52 +142,27 @@ def _recording_outputs(
 def _build_playlist_url(
     base_path: str, playlist_path: Optional[str], output_dir: str = "recordings"
 ) -> Optional[str]:
-    """Build a /recordings/... URL that works for both old (flat ts_chan dirs) and
-    new ({channel}/{date}/{title}.m3u8) layouts. The static mount serves from the recordings root.
-    """
+    """Build a /recordings/... URL. The static mount serves from the recordings root."""
     if not playlist_path:
         return None
-    try:
-        base_path, playlist_path = _resolve_playlist_paths(base_path, playlist_path)
-        bp = Path(base_path)
-        # Robust relative computation: locate the recordings root component in the path
-        parts = list(bp.parts)
-        out_name = Path(output_dir).name.lower()
-        idx = -1
-        for i, part in enumerate(parts):
-            if part.lower() in (out_name, "recordings"):
-                idx = i
-                break
-        if idx >= 0 and idx + 1 < len(parts):
-            rel = "/".join(parts[idx + 1 :])
-            return f"/recordings/{rel}/{playlist_path}"
-        # Fallbacks
-        if bp.name:
-            return f"/recordings/{bp.name}/{playlist_path}"
-        return f"/recordings/{playlist_path}"
-    except Exception:
-        return (
-            f"/recordings/{Path(base_path).name}/{playlist_path}"
-            if playlist_path
-            else None
-        )
+    bp = Path(base_path)
+    out_name = Path(output_dir).name.lower()
+    parts = list(bp.parts)
+    idx = -1
+    for i, part in enumerate(parts):
+        if part.lower() in (out_name, "recordings"):
+            idx = i
+            break
+    if idx >= 0 and idx + 1 < len(parts):
+        rel = "/".join(parts[idx + 1 :])
+        return f"/recordings/{rel}/{playlist_path}"
+    if bp.name:
+        return f"/recordings/{bp.name}/{playlist_path}"
+    return f"/recordings/{playlist_path}"
 
 
-def _output_roots() -> list[Path]:
-    configured = get_setting("output_dir", str(DEFAULT_OUTPUT_DIR))
-    roots: list[Path] = []
-    seen: set[str] = set()
-    for raw in (configured, str(DEFAULT_OUTPUT_DIR), "recordings"):
-        try:
-            resolved = Path(raw).resolve()
-        except OSError:
-            continue
-        key = str(resolved)
-        if key in seen:
-            continue
-        seen.add(key)
-        roots.append(resolved)
-    return roots
+def _output_root() -> Path:
+    return Path(get_setting("output_dir", str(DEFAULT_OUTPUT_DIR))).resolve()
 
 
 def _dir_size(path: Path) -> int:
@@ -256,26 +199,22 @@ def _recording_size_bytes(
                 break
     if not base_path:
         return 0
-    resolved_base = base_path
-    if playlist_path:
-        resolved_base, _ = _resolve_playlist_paths(base_path, playlist_path)
-    return _dir_size(Path(resolved_base))
+    return _dir_size(Path(base_path))
 
 
 def _path_is_under_output_root(path: Path) -> bool:
     try:
         resolved = path.resolve()
+        root = _output_root()
     except OSError:
         return False
-    for root in _output_roots():
-        if resolved == root:
-            return False
-        try:
-            resolved.relative_to(root)
-            return True
-        except ValueError:
-            continue
-    return False
+    if resolved == root:
+        return False
+    try:
+        resolved.relative_to(root)
+        return True
+    except ValueError:
+        return False
 
 
 def _delete_recording_files(base_path: str, playlist_path: Optional[str]) -> list[str]:
@@ -283,11 +222,7 @@ def _delete_recording_files(base_path: str, playlist_path: Optional[str]) -> lis
     if not base_path:
         return deleted
 
-    resolved_base = base_path
-    if playlist_path:
-        resolved_base, _ = _resolve_playlist_paths(base_path, playlist_path)
-
-    target = Path(resolved_base)
+    target = Path(base_path)
     if not _path_is_under_output_root(target):
         log_event("", f"녹화 파일 삭제 건너뜀 (경로 검증 실패): {target}", level="warn")
         return deleted
@@ -302,16 +237,12 @@ def _delete_recording_files(base_path: str, playlist_path: Optional[str]) -> lis
     return deleted
 
 
-def _broadcast_key(detail: LiveDetail) -> tuple[Optional[int], Optional[str]]:
-    return (detail.live_id, detail.open_date)
-
-
 def _is_dismissed_broadcast(channel_id: str, detail: LiveDetail) -> bool:
     """True if this live session was manually stopped and broadcast info is unchanged."""
     key = dismissed_live.get(channel_id)
     if key is None:
         return False
-    return _broadcast_key(detail) == key
+    return (detail.live_id, detail.open_date) == key
 
 
 def _find_resumable_recording(
@@ -322,24 +253,16 @@ def _find_resumable_recording(
     if not prev or not prev.base_path or not prev.playlist_path:
         return None
 
-    base_path, playlist_path = _resolve_playlist_paths(
-        prev.base_path, prev.playlist_path
-    )
-    base_dir = Path(base_path)
-    pl_file = base_dir / playlist_path
+    base_dir = Path(prev.base_path)
+    pl_file = base_dir / prev.playlist_path
     if not pl_file.is_file():
         return None
 
     meta = read_recording_meta(base_dir) or {}
     prev_key = broadcast_key_from_meta(meta)
-    cur_key = _broadcast_key(detail)
+    cur_key = (detail.live_id, detail.open_date)
     if prev_key != (None, None) and prev_key == cur_key:
-        return prev.id, base_dir, playlist_path, meta
-
-    # Legacy sessions without live_id: fall back to title when both are non-empty
-    if prev_key == (None, None) and meta.get("live_title") and detail.live_title:
-        if meta.get("live_title") == detail.live_title:
-            return prev.id, base_dir, playlist_path, meta
+        return prev.id, base_dir, prev.playlist_path, meta
 
     return None
 
@@ -422,27 +345,6 @@ async def _cleanup_active_if_finished(channel_id: str):
             pass
         active.pop(channel_id, None)
         log_event(channel_id, "녹화 세션 종료됨 (자연 종료 / 오류 / 방송 종료)")
-
-
-async def _watch_recorder(channel_id: str):
-    """Background watcher: await the recorder's task, then cleanup.
-    This makes natural completions (live ended, errors, etc.) promptly remove the active entry
-    without waiting for the next monitor tick.
-    """
-    try:
-        entry = active.get(channel_id)
-        if not entry:
-            return
-        task = entry.get("task")
-        if task:
-            try:
-                await task
-            except Exception:
-                # Recorder already stores last_error and finalizes its own files.
-                pass
-        await _cleanup_active_if_finished(channel_id)
-    except Exception:
-        pass
 
 
 # ---------------- Background monitor ----------------
@@ -611,7 +513,14 @@ async def start_recording_for_channel(
 
     # Launch a detached watcher so the active entry is promptly cleaned when the recorder finishes naturally.
     # This enables immediate re-start for same-day re-lives / technical reconnects.
-    asyncio.create_task(_watch_recorder(channel_id), name=f"zzk-watch-{channel_id}")
+    async def _watch():
+        try:
+            await recorder._task
+        except Exception:
+            pass
+        await _cleanup_active_if_finished(channel_id)
+
+    asyncio.create_task(_watch(), name=f"zzk-watch-{channel_id}")
 
     log_event(
         channel_id,
@@ -637,7 +546,7 @@ async def stop_recording_for_channel(channel_id: str, reason: str = "manual"):
         try:
             detail = await _chzzk().get_live_detail(channel_id)
             if detail and detail.status == "OPEN":
-                dismissed_live[channel_id] = _broadcast_key(detail)
+                dismissed_live[channel_id] = (detail.live_id, detail.open_date)
         except Exception:
             pass
 
@@ -1079,7 +988,7 @@ async def api_create_clip(recording_id: int, payload: ClipRequest):
         raise HTTPException(400, str(e)) from e
 
     output_dir = get_setting("output_dir", "recordings")
-    result = clip_job_to_dict(job)
+    result = job_to_dict(job)
     if job.output_path and job.status == ConversionStatus.COMPLETED:
         result["url"] = _build_playlist_url(
             rec.base_path, job.output_path.name, output_dir
@@ -1111,7 +1020,7 @@ async def api_clip_status(
     output_dir = get_setting("output_dir", "recordings")
 
     if job:
-        result = clip_job_to_dict(job)
+        result = job_to_dict(job)
         if job.output_path and job.status == ConversionStatus.COMPLETED:
             result["url"] = _build_playlist_url(
                 rec.base_path, job.output_path.name, output_dir
@@ -1152,7 +1061,8 @@ async def api_clip_status(
 
 @app.get("/api/logs")
 async def api_logs(limit: int = 100):
-    return {"logs": LOG_BUFFER[-limit:][::-1]}
+    logs = list(LOG_BUFFER)
+    return {"logs": logs[-limit:][::-1]}
 
 
 @app.get("/api/settings")
