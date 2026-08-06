@@ -21,7 +21,9 @@ Key guarantees:
 from __future__ import annotations
 
 import asyncio
+import re
 import time
+import unicodedata
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
@@ -233,12 +235,17 @@ class ChzzkRecorder:
     def _sanitize_name(self, name: str) -> str:
         if not name:
             return ""
+        # Normalize CJK / Hangul compatibility forms so visually identical chars collapse
+        text = unicodedata.normalize("NFC", name)
+        # Keep letters, numbers, Korean, and a few safe delimiters; replace the rest with _
         safe = "".join(
-            c if c.isalnum() or c in ("-", "_", ".") else "_" for c in name
+            c
+            if c.isalnum() or c in ("-", "_", ".") or "\uac00" <= c <= "\ud7a3"
+            else "_"
+            for c in text
         ).strip()
-        while "__" in safe:
-            safe = safe.replace("__", "_")
-        return safe.strip("._-") or ""
+        safe = re.sub(r"_+", "_", safe)
+        return safe.strip("._-").replace(".", "_") or ""
 
     def _make_unique_playlist_name(self, base: str, directory: Path) -> str:
         candidate = f"{base}.m3u8"
