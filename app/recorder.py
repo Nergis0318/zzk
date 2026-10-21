@@ -466,10 +466,6 @@ class ChzzkRecorder:
                     self.state.total_duration += dur
                     new_added += 1
 
-                if new_added == 0:
-                    # No new segments this poll (normal for live)
-                    pass
-
                 consecutive_errors = 0
                 if new_added > 0:
                     self.state.last_error = None
@@ -549,23 +545,6 @@ class ChzzkRecorder:
                         i += 1
             i += 1
         return segments, map_uri
-
-    def _guess_init_url(
-        self, segments: list[tuple[float, str, str]], variant_url: str
-    ) -> Optional[str]:
-        """Best-effort init.mp4 URL when the playlist omits #EXT-X-MAP."""
-        candidates: list[str] = []
-        variant_base = variant_url.rsplit("/", 1)[0] + "/"
-        candidates.append(urljoin(variant_base, self._map_local_name))
-        if segments:
-            seg_base = segments[0][1].rsplit("/", 1)[0] + "/"
-            candidates.append(urljoin(seg_base, self._map_local_name))
-        seen: set[str] = set()
-        for url in candidates:
-            if url and url not in seen:
-                seen.add(url)
-                return url
-        return None
 
     async def _ensure_init_segment(self, init_url: str) -> bool:
         if self._has_map or not self._chunk_dir:

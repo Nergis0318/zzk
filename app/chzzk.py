@@ -74,24 +74,6 @@ class ChzzkClient:
             return data
         return {}
 
-    async def get_channel(self, channel_id: str) -> Optional[ChannelInfo]:
-        url = f"https://api.chzzk.naver.com/service/v1/channels/{channel_id}"
-        try:
-            data = await self._get_json(url)
-            if data.get("code") != 200:
-                return None
-            c = data.get("content") or {}
-            return ChannelInfo(
-                channel_id=c.get("channelId", channel_id),
-                channel_name=c.get("channelName", ""),
-                channel_image_url=c.get("channelImageUrl"),
-                verified=bool(c.get("verifiedMark")),
-                follower_count=int(c.get("followerCount") or 0),
-                open_live=bool(c.get("openLive")),
-            )
-        except Exception:
-            return None
-
     async def get_live_detail(self, channel_id: str) -> Optional[LiveDetail]:
         """Primary endpoint for live info."""
         url = f"https://api.chzzk.naver.com/service/v3.2/channels/{channel_id}/live-detail"
@@ -132,6 +114,24 @@ class ChzzkClient:
             return data.get("content") or {}
         except Exception:
             return {}
+
+    async def get_channel(self, channel_id: str) -> Optional[ChannelInfo]:
+        url = f"https://api.chzzk.naver.com/service/v1/channels/{channel_id}"
+        try:
+            data = await self._get_json(url)
+            if data.get("code") != 200:
+                return None
+            c = data.get("content") or {}
+            return ChannelInfo(
+                channel_id=c.get("channelId", channel_id),
+                channel_name=c.get("channelName", ""),
+                channel_image_url=c.get("channelImageUrl"),
+                verified=bool(c.get("verifiedMark")),
+                follower_count=int(c.get("followerCount") or 0),
+                open_live=bool(c.get("openLive")),
+            )
+        except Exception:
+            return None
 
 
 def extract_channel_id_from_url(url: str) -> Optional[str]:
